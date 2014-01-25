@@ -1,5 +1,4 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -8,15 +7,18 @@
     
     <!--Include Stylesheets -->
     <link href="<c:url value="/resources/css/bootstrap.css" />" rel="stylesheet"/>
+    <link href="<c:url value="/resources/css/font-awesome.css" />" rel="stylesheet"/>
     <link href="<c:url value="/resources/css/global.css" />" rel="stylesheet"/>
     <!--End Including Stylesheets-->
     
     <!-- Include JS Plugins -->
     <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
-    <script src="<c:url value="/resources/js/bootstrap.js" />"></script>    
+    <script src="<c:url value="/resources/js/bootstrap.js" />"></script>
     <script type="text/javascript"src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCblPnV936VjhXRneHrOKPl_aB1hozPlFU&sensor=false">
     </script>
     <!--End Including JS Plugins-->
+ 	
+ 
     
  	<script type="text/javascript">
     
@@ -162,11 +164,12 @@
 			 	map.panTo(myLatlng);
 			    map.setZoom(15);
 			});
+			
+			
 		
 			
 	  	}
 
-    	
     	/*----------------------------------------------------
 		Object: window
 		Event: load
@@ -174,6 +177,8 @@
 		------------------------------------------------------*/
 	  	google.maps.event.addDomListener(window, 'load', initialize);
 	  
+	  	
+	  	
 
     </script>
     
@@ -208,7 +213,7 @@
 		------------------------------------------------------*/
 		$(document).ready(function(){
 			
-			$("#nav").addClass("out-fixed");
+	
 			
 			$("#goup-logo").hover(
 				function(){
@@ -237,15 +242,23 @@
   <body>
 
 	<!-- begin of map-wrapper -->
-	<div id="map-wrapper">
+	
+
+	<div id="map-wrapper" class="hi-icon-effect-6">
 	
 
 		<div id="map-canvas" >
     	</div>
 
   
-    	<div id="nav" class="overlay circle">  	
-    	</div>
+    	<div id="nav" class="overlay circle nav-collapse in">
+    	<ul>
+    		<li><a><i class="fa fa-search fa-lg"></i>Search</a></li>
+    		<li><a><i class="fa fa-map-marker fa-lg"></i>My Places</a></li>
+    		<li><a><i class="fa fa-star fa-lg"></i>Extras</a></li>
+    		
+    	</ul>
+       	</div>
     
     	
     	<div id="goup-logo" class="overlay circle logo">
