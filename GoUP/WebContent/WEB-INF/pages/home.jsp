@@ -367,14 +367,11 @@
   <body>
 
 	<!-- begin of map-wrapper -->
-
-	<div id="map-wrapper" class="hi-icon-effect-6">
+	<div id="side-box" class="col-md-3">
 	
-
-		<div id="map-canvas" >
+		<div id="goup-logo" class="overlay circle logo">
     	</div>
-		
-  		<div id="side-box">
+	
 	  		<div class="side-box-inner">
 	  			<%
 	  		
@@ -433,9 +430,16 @@
 	  			</form:form>
 	  		</div>
   		</div>
-  
-    	<div id="goup-logo" class="overlay circle logo">
+
+	<div id="map-wrapper" class="col-md-9">
+	
+
+		<div id="map-canvas" >
     	</div>
+		
+  		
+  
+    	
     	
     
     </div>
