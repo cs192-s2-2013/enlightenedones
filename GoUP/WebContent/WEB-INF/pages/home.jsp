@@ -25,6 +25,7 @@
     
  		var map;
  		var marker;
+ 		var infoWindow = new google.maps.InfoWindow();
     	function initialize() {
     	
     		var myLatlng = new google.maps.LatLng(14.650306,121.05205); //Maharlika St. in front of Elliptical Road
@@ -230,10 +231,6 @@
     				map.panTo(myLatLng);
     			
     			
-
-    				var infowindow = new google.maps.InfoWindow({
-    				      content: place.placeName
-    				  });
     				/*Set the map marker position*/
     				var markerPosition = myLatLng;
     				
@@ -241,32 +238,25 @@
     					marker.setPosition(markerPosition);
     				}else{
     					marker = new google.maps.Marker({
-      				      position: markerPosition,
-      				      map: map,
-      				      title: place.placeName
+      				    position: markerPosition,
+      				    map: map,
+      				    title: place.placeName
       				      
       				});
     					
     				}
-    		
-    				
-    				
-    				for(var i=0; i<markers.length-1; i++){
-    					markers[i].setMap(null);
-    				}
-    				markers=[];
-    				
-    				
-					markers.push(marker);
-    				
+    				infoWindow.close();
     				marker.setMap(map);
+    				
     				/*--------------------------------------------------
     				Object: marker
     				Event: click
     				Function: Shows information box about UP 
 	    			-----------------------------------------------------*/
 	    			google.maps.event.addListener(marker, 'click', function() {
-	    			    infowindow.open(map,marker);
+	    				
+	    				infoWindow.setContent(place.placeName);
+	    			    infoWindow.open(map,marker);
 	    			});
     	  
     				
