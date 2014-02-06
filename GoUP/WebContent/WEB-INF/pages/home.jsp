@@ -24,6 +24,10 @@
  	<script type="text/javascript">
     
  		var map;
+ 		var upIkotRoutePath;
+ 		var upTokiRoutePath;
+ 		var upKatipRoutePath;
+ 		var upPhilcRoutePath;
     	function initialize() {
     	
     		var myLatlng = new google.maps.LatLng(14.650306,121.05205); //Maharlika St. in front of Elliptical Road
@@ -121,8 +125,14 @@
       
 			
 			
+  	    	/*var upIkotRouteCoordinates = new Array();
+  	    	for(var i=0; i<56; i++)
+  	    		{
+  	    			var x = 
+  	    			upIkotRouteCoordinates[i] = new google.maps.LatLng(x,y);
+  	    		} */
 			
-			var upIkotRouteCoordinates = [	
+  	    	var upIkotRouteCoordinates = [	
 											new google.maps.LatLng(14.65765,121.062345), //magsaysay ave emilio jacinto st corner
 											new google.maps.LatLng(14.654837,121.06234), //u ave.
 											new google.maps.LatLng(14.647285,121.062294), //cp garcia
@@ -184,7 +194,7 @@
 			                              
 			                              ];
 			
-			var upIkotRoutePath = new google.maps.Polyline({
+			upIkotRoutePath = new google.maps.Polyline({
 	                 path: upIkotRouteCoordinates,
 	                 geodesic: true,
 	                 strokeColor: '#fff000',
@@ -195,7 +205,194 @@
 			upIkotRoutePath.setMap(map);
 			
 			
+			var upTokiRouteCoordinates = [	
+											new google.maps.LatLng(14.653742, 121.064903), 
+											new google.maps.LatLng(14.653846,121.068579), //a. roces
+											new google.maps.LatLng(14.657468,121.068536),
+											new google.maps.LatLng(14.659373,121.068525), //sc
+											new google.maps.LatLng(14.659388, 121.072424),
+											new google.maps.LatLng(14.659233, 121.072692), //ilangilang
+											new google.maps.LatLng(14.656088, 121.072714),									
+											new google.maps.LatLng(14.656056, 121.068594),
+											
+											new google.maps.LatLng(14.653825, 121.068658), //circle again
+											new google.maps.LatLng(14.653897, 121.072692),
+											new google.maps.LatLng(14.653773, 121.072757), //near vinzons curve
+											new google.maps.LatLng(14.652237, 121.072810),
+											new google.maps.LatLng(14.652039, 121.072778), //curve again
+											new google.maps.LatLng(14.651261, 121.071963), 
+											new google.maps.LatLng(14.651136, 121.071920), //curve again agian
+											new google.maps.LatLng(14.650347, 121.071984), //science circle
+											new google.maps.LatLng(14.650493, 121.072639),
+											new google.maps.LatLng(14.650534, 121.073615),
+											new google.maps.LatLng(14.650462, 121.073744), //curve again
+											new google.maps.LatLng(14.648230, 121.073765), //CP Garcia
+											new google.maps.LatLng(14.648188, 121.072531), 
+											new google.maps.LatLng(14.647597, 121.071383),
+											new google.maps.LatLng(14.648562, 121.070761), //Math
+											new google.maps.LatLng(14.648531, 121.070697),
+											new google.maps.LatLng(14.647576, 121.071319), //CPG again
+											new google.maps.LatLng(14.647327, 121.070907),
+											new google.maps.LatLng(14.647187, 121.070124),
+											new google.maps.LatLng(14.647171, 121.068986),
+											new google.maps.LatLng(14.648874, 121.068981), //DCS
+											new google.maps.LatLng(14.650223, 121.068471),
+											new google.maps.LatLng(14.650436, 121.068429), //MS
+											new google.maps.LatLng(14.651095, 121.068418),
+											new google.maps.LatLng(14.652003, 121.068627), 
+											new google.maps.LatLng(14.652423, 121.068654),
+											new google.maps.LatLng(14.652403,121.068321),
+											new google.maps.LatLng(14.652252,121.067812),
+											new google.maps.LatLng(14.652128,121.067506),
+											new google.maps.LatLng(14.651738,121.066959), //OUR
+											new google.maps.LatLng(14.651297,121.066749),
+											new google.maps.LatLng(14.651183,121.066728),
+											
+											new google.maps.LatLng(14.650327,121.06683),
+											new google.maps.LatLng(14.651733,121.065156),
+											new google.maps.LatLng(14.652003,121.065022), 
+											new google.maps.LatLng(14.652932,121.065172), 
+											new google.maps.LatLng(14.652896,121.06234), 
+
+											new google.maps.LatLng(14.657634,121.062356),
+											new google.maps.LatLng(14.657608,121.063757), //SURP
+											new google.maps.LatLng(14.657525,121.064811),
+											new google.maps.LatLng(14.655914,121.064789), //Circle
+											new google.maps.LatLng(14.654894,121.064277), 
+											new google.maps.LatLng(14.654811,121.064282),
+											new google.maps.LatLng(14.653799,121.064795),
+											new google.maps.LatLng(14.653742, 121.064903)
+			                              
+			                              ];
 			
+			upTokiRoutePath = new google.maps.Polyline({
+	                 path: upTokiRouteCoordinates,
+	                 geodesic: true,
+	                 strokeColor: '#7f00ff',
+	                 strokeOpacity: 0.70,
+	                 strokeWeight: 3
+	               });
+
+			upTokiRoutePath.setMap(map);
+			
+			
+			var upKatipRouteCoordinates = [	
+											new google.maps.LatLng(14.657525,121.072742), //GT
+											new google.maps.LatLng(14.659144,121.072736), 
+											new google.maps.LatLng(14.659393,121.072468),
+											new google.maps.LatLng(14.659362,121.068547), 
+											new google.maps.LatLng(14.657494,121.068547), //Engg
+											new google.maps.LatLng(14.657546,121.064818), 
+											
+											new google.maps.LatLng(14.655911,121.064791), //Circle								
+											new google.maps.LatLng(14.654961,121.064287),
+											new google.maps.LatLng(14.654832,121.064276), 
+											new google.maps.LatLng(14.65382,121.064775),
+											new google.maps.LatLng(14.6537,121.064888), 
+											new google.maps.LatLng(14.653804,121.068594), //AS
+											new google.maps.LatLng(14.653887,121.072735), //Vinsonz
+											new google.maps.LatLng(14.654349,121.072988), 
+											new google.maps.LatLng(14.654858,121.073096), 
+											new google.maps.LatLng(14.655408,121.073096),
+											new google.maps.LatLng(14.655885,121.072919),
+											new google.maps.LatLng(14.656103,121.072715),
+											new google.maps.LatLng(14.657478,121.072736), //GT again
+											
+											new google.maps.LatLng(14.657489,121.074163), //Katip
+											new google.maps.LatLng(14.653565,121.074216), 
+											new google.maps.LatLng(14.648303,121.074237), //CPG
+											new google.maps.LatLng(14.64631,121.074246),
+											new google.maps.LatLng(14.643694,121.074547), 
+											new google.maps.LatLng(14.636843,121.074225), //Arr-neo
+											new google.maps.LatLng(14.632005,121.074032), //Jeep Stop
+											
+											new google.maps.LatLng(14.632218,121.074351),
+											new google.maps.LatLng(14.634694,121.074474),
+											new google.maps.LatLng(14.634808,121.074437),
+											new google.maps.LatLng(14.641223,121.074683), //Arr-neo2
+											new google.maps.LatLng(14.643299,121.074801),
+											new google.maps.LatLng(14.646611,121.074431), 
+											new google.maps.LatLng(14.649559,121.074474),
+											new google.maps.LatLng(14.653534,121.074474), //Shister
+											new google.maps.LatLng(14.654624,121.074527),
+											new google.maps.LatLng(14.65751,121.074522),
+											new google.maps.LatLng(14.657541,121.074469),
+											new google.maps.LatLng(14.657525,121.072742)
+			                              
+			                              ];
+			
+			upKatipRoutePath = new google.maps.Polyline({
+	                 path: upKatipRouteCoordinates,
+	                 geodesic: true,
+	                 strokeColor: '#f00',
+	                 strokeOpacity: 0.70,
+	                 strokeWeight: 3
+	               });
+
+			upKatipRoutePath.setMap(map);
+			
+			
+			var upPhilcRouteCoordinates = [	
+											new google.maps.LatLng(14.657525,121.072742), //GT
+											new google.maps.LatLng(14.659144,121.072736), 
+											new google.maps.LatLng(14.659393,121.072468),
+											new google.maps.LatLng(14.659362,121.068547), 
+											new google.maps.LatLng(14.657494,121.068547), //Engg
+											new google.maps.LatLng(14.656067,121.068562),
+											new google.maps.LatLng(14.656046,121.065001),
+											new google.maps.LatLng(14.655911,121.064791), //Circle								
+											new google.maps.LatLng(14.654961,121.064287),
+											
+											new google.maps.LatLng(14.654946,121.064105), //ENtrance
+											new google.maps.LatLng(14.654904,121.062345),
+											new google.maps.LatLng(14.654889,121.058397),
+											new google.maps.LatLng(14.654858,121.056906),
+											new google.maps.LatLng(14.654909,121.055876),
+											new google.maps.LatLng(14.655024,121.055704),
+											new google.maps.LatLng(14.655143,121.055661),
+											new google.maps.LatLng(14.655465,121.055822), //commonwealth
+											new google.maps.LatLng(14.656549,121.057517), //uturn
+											new google.maps.LatLng(14.656835,121.057292),
+											new google.maps.LatLng(14.656207,121.056267),
+											new google.maps.LatLng(14.655076,121.054545),
+											new google.maps.LatLng(14.65451,121.053762),
+											new google.maps.LatLng(14.653965,121.053177),
+											
+											new google.maps.LatLng(14.652808,121.05138), //uturn again
+											new google.maps.LatLng(14.652615,121.051544),
+											new google.maps.LatLng(14.653,121.052092),
+											new google.maps.LatLng(14.653433,121.052802),
+											new google.maps.LatLng(14.654035,121.053961),
+											new google.maps.LatLng(14.654193,121.054382),
+											new google.maps.LatLng(14.654642,121.056461),
+											new google.maps.LatLng(14.654694,121.05693),
+											new google.maps.LatLng(14.654767,121.062332), //gate
+											new google.maps.LatLng(14.65479,121.064062),
+											
+											new google.maps.LatLng(14.654746,121.064304), //oble
+											new google.maps.LatLng(14.65382,121.064775),
+											new google.maps.LatLng(14.6537,121.064888), 
+											new google.maps.LatLng(14.653804,121.068594), //AS
+											new google.maps.LatLng(14.653887,121.072735), //Vinsonz
+											new google.maps.LatLng(14.654349,121.072988), 
+											new google.maps.LatLng(14.654858,121.073096), 
+											new google.maps.LatLng(14.655408,121.073096),
+											new google.maps.LatLng(14.655885,121.072919),
+											new google.maps.LatLng(14.656103,121.072715),
+											new google.maps.LatLng(14.657478,121.072736), //GT again
+											new google.maps.LatLng(14.657525,121.072742)
+			                              
+			                              ];
+			
+			upPhilcRoutePath = new google.maps.Polyline({
+	                 path: upPhilcRouteCoordinates,
+	                 geodesic: true,
+	                 strokeColor: '#0f0',
+	                 strokeOpacity: 0.70,
+	                 strokeWeight: 3
+	               });
+
+			upPhilcRoutePath.setMap(map);
 			
 			/*----------------------------------------------------
 				Object: #goup-logo
@@ -213,6 +410,44 @@
 			
 	  	}
 
+    	function ikotRoute (){
+    		upIkotRoutePath.setMap(map);
+    		
+    		upTokiRoutePath.setMap(null);
+    		upKatipRoutePath.setMap(null);
+    		upPhilcRoutePath.setMap(null);
+    	}
+    	
+    	function tokiRoute (){
+    		upTokiRoutePath.setMap(map);
+    		
+    		upIkotRoutePath.setMap(null);
+    		upKatipRoutePath.setMap(null);
+    		upPhilcRoutePath.setMap(null);
+    	}
+    	
+    	function katipRoute (){
+    		upKatipRoutePath.setMap(map);
+    		
+    		upIkotRoutePath.setMap(null);
+    		upTokiRoutePath.setMap(null);
+    		upPhilcRoutePath.setMap(null);
+    	}
+    	function philcRoute (){
+    		upPhilcRoutePath.setMap(map);
+    		
+    		upIkotRoutePath.setMap(null);
+    		upTokiRoutePath.setMap(null);
+    		upKatipRoutePath.setMap(null);
+    	}
+    	
+    	function allRoute (){
+			upIkotRoutePath.setMap(map);
+    		upTokiRoutePath.setMap(map);
+    		upKatipRoutePath.setMap(map);
+    		upPhilcRoutePath.setMap(map);
+    	}
+    	
     	function doSearchPlace(){
         	var placeName = $('#searchPlaceName').val();
     		$.ajax({
@@ -345,7 +580,6 @@
   		<div id="side-box">
 	  		<div class="side-box-inner">
 	  			<%
-	  		
 	  			
 	  			if(request.getAttribute("message")!=null) {
 	  				out.print(" <div class=\"alert alert-success alert-dismissable\">");
@@ -368,6 +602,27 @@
 	  					<tr>
 						<td></td>
 						<td><input class="btn btn-primary" type="button" value="Search" onclick="doSearchPlace();" /></td>
+						</tr>
+	  					
+	  				</table>
+	  			</form>
+	  			
+	  			<form id="route1" >
+	  				<h3>Jeepney Routes</h3>
+	  				<table>
+	  									 					
+	  					<tr>
+						<td></td>
+						<td><input class="btn btn-primary" type="button" value="Ikot Route" onclick="ikotRoute();" /></td>
+						<td><input class="btn btn-primary" type="button" value="Toki Route" onclick="tokiRoute();" /></td>
+						</tr>
+						<tr>
+						<td></td>
+						<td><input class="btn btn-primary" type="button" value="Katipunan Route" onclick="katipRoute();" /></td>
+						<td><input class="btn btn-primary" type="button" value="Philcoa Route" onclick="philcRoute();" /></td>
+						</tr> <tr> <td></td>
+						<td><input class="btn btn-primary" type="button" value="ALL Route" onclick="allRoute();" /></td>
+						
 						</tr>
 	  					
 	  				</table>
