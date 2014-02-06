@@ -24,6 +24,7 @@
  	<script type="text/javascript">
     
  		var map;
+ 		var marker;
     	function initialize() {
     	
     		var myLatlng = new google.maps.LatLng(14.650306,121.05205); //Maharlika St. in front of Elliptical Road
@@ -212,6 +213,8 @@
 			
 			
 	  	}
+    	
+
 
     	function doSearchPlace(){
         	var placeName = $('#searchPlaceName').val();
@@ -226,19 +229,37 @@
     				myLatLng = new google.maps.LatLng(placeLat,placeLong);
     				map.panTo(myLatLng);
     			
-    				
+    			
+
     				var infowindow = new google.maps.InfoWindow({
     				      content: place.placeName
     				  });
     				/*Set the map marker position*/
     				var markerPosition = myLatLng;
-    				var marker = new google.maps.Marker({
-    				      position: markerPosition,
-    				      map: map,
-    				      title: place.placeName
-    				      
-    				});
     				
+    				if (marker){
+    					marker.setPosition(markerPosition);
+    				}else{
+    					marker = new google.maps.Marker({
+      				      position: markerPosition,
+      				      map: map,
+      				      title: place.placeName
+      				      
+      				});
+    					
+    				}
+    		
+    				
+    				
+    				for(var i=0; i<markers.length-1; i++){
+    					markers[i].setMap(null);
+    				}
+    				markers=[];
+    				
+    				
+					markers.push(marker);
+    				
+    				marker.setMap(map);
     				/*--------------------------------------------------
     				Object: marker
     				Event: click
@@ -256,6 +277,8 @@
     			
     		});
     	}
+    	
+
     	/*----------------------------------------------------
 		Object: window
 		Event: load
@@ -268,10 +291,19 @@
 
     </script>
     
+    <script>
+
+    	function searchPlaceEnter() {
+	    	doSearchPlace();
+		
+	    	};
+	
+	</script>
 
     
     <script>
-  
+    
+	
     	/*-------------------------
     	Function: 	Gets the height of the window screen 
     				and sets it as the height of the map wrapper
@@ -355,13 +387,13 @@
 	  			}
 	  			%>
 	  			
-	  			<form id="searchPlace" >
+	  			<form id="searchPlace" onkeypress="return event.keyCode != 13;">
 	  				<h3>Search Place</h3>
 	  				<table>
 	  				
 	  					<tr>
 	  					<td>Place Name:</td>
-	  					<td><input id="searchPlaceName" class="form-control" /></td>
+	  					<td><input id="searchPlaceName" type="text" class="form-control" onKeyUp="if (event.keyCode == 13) searchPlaceEnter();"/></td>
 	  					</tr>
 	  					
 	  				  					
