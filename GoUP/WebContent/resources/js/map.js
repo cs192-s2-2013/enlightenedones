@@ -1,16 +1,13 @@
 var map;
 var marker;
 var infoWindow = new google.maps.InfoWindow();
+var zoomFluid;
  
 var upIkotRoutePath;
 var upTokiRoutePath;
 var upKatipRoutePath;
 var upPhilcRoutePath;
 var visiblePath = [0,0,0,0,0];
-var lineSymbol = {
-	    path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
-	  };
-
 
 var upMapBoundaryCoordinates = [
   	                           	new google.maps.LatLng(14.662367,121.044873),
@@ -336,11 +333,7 @@ function initialize() {
              geodesic: true,
              strokeColor: '#fff000',
              strokeOpacity: 0.70,
-             strokeWeight: 3,
-             icons: [{
-                 icon: lineSymbol,
-                 offset: '100%'
-               }]
+             strokeWeight: 3
            });
 	
 	upTokiRoutePath = new google.maps.Polyline({
@@ -348,11 +341,7 @@ function initialize() {
              geodesic: true,
              strokeColor: '#7f00ff',
              strokeOpacity: 0.70,
-             strokeWeight: 3,
-             icons: [{
-                 icon: lineSymbol,
-                 offset: '100%'
-               }]
+             strokeWeight: 3
            });
 
 	
@@ -361,11 +350,7 @@ function initialize() {
              geodesic: true,
              strokeColor: '#f00',
              strokeOpacity: 0.70,
-             strokeWeight: 3,
-             icons: [{
-                 icon: lineSymbol,
-                 offset: '100%'
-               }]
+             strokeWeight: 3
            });
 
 	
@@ -374,11 +359,7 @@ function initialize() {
              geodesic: true,
              strokeColor: '#0f0',
              strokeOpacity: 0.70,
-             strokeWeight: 3,
-             icons: [{
-                 icon: lineSymbol,
-                 offset: '100%'
-               }]
+             strokeWeight: 3
            });
 
 	/*----------------------------------------------------
@@ -395,18 +376,16 @@ function initialize() {
 	
 	}
 
-function setMapAtCenter(){
-	var myLatlng = new google.maps.LatLng(14.649361,121.055725);
-	zoomFluid= map.getZoom();
+function setInitPanAndZoom(){
+	
+	var myLatlng = new google.maps.LatLng(14.649361,121.055725); 
 	map.panTo(myLatlng);
 	zoomOut();
 }
-
-
 function ikotRoute (){
 	
-	setMapAtCenter();
 	if(visiblePath[0]==0){
+		
 		upIkotRoutePath.setMap(map);
 		visiblePath[0]=1;
 		
@@ -420,7 +399,6 @@ function ikotRoute (){
 }
 
 function tokiRoute (){
-	setMapAtCenter();
 	if(visiblePath[1]==0){
 		upTokiRoutePath.setMap(map);
 		visiblePath[1]=1;
@@ -433,7 +411,6 @@ function tokiRoute (){
 }
 
 function katipRoute (){
-	setMapAtCenter();
 	if(visiblePath[2]==0){
 		upKatipRoutePath.setMap(map);
 		visiblePath[2]=1;
@@ -445,7 +422,6 @@ function katipRoute (){
 	}
 }
 function philcRoute (){
-	setMapAtCenter();
 	if(visiblePath[3]==0){
 		upPhilcRoutePath.setMap(map);
 		visiblePath[3]=1;
@@ -459,7 +435,6 @@ function philcRoute (){
 
 function allRoute (){
 	
-	setMapAtCenter();
 	if(visiblePath[4]==0){
 		upIkotRoutePath.setMap(map);
 		upTokiRoutePath.setMap(map);
@@ -483,17 +458,54 @@ function allRoute (){
 	}
 	
 }
+
+function panToLatLng(placeName,placeLat,placeLong){
+	var myLatLng = new google.maps.LatLng(placeLat,placeLong);
+
+	/*Set the map marker position*/
+	var markerPosition = myLatLng;
+	
+	if (marker){
+		marker.setPosition(markerPosition);
+	}else{
+		marker = new google.maps.Marker({
+		    position: markerPosition,
+		    map: map,
+		    title: placeName
+		      
+		});
+		
+	}
+	infoWindow.close();
+	marker.setMap(map);
+	
+	zoomFluid = map.getZoom();
+	map.panTo(myLatLng);
+	zoomTo();
+	
+	/*--------------------------------------------------
+	Object: marker
+	Event: click
+	Function: Shows information box about UP 
+	-----------------------------------------------------*/
+	google.maps.event.addListener(marker, 'click', function() {
+		
+		infoWindow.setContent(place.placeName);
+	    infoWindow.open(map,marker);
+	});
+	
+}
+
 var previousPlace=null;
-var zoomFluid;
+
 
 function doSearchPlace(){
-	
 	var placeName = $('#searchPlaceName').val();
+	
 	if(previousPlace==placeName)
 		return false;
-	
-	previousPlace = placeName;
-	
+
+		previousPlace = placeName;
 	$.ajax({
 		type: "Get",
 		url: "/UPMap/findPlace",
@@ -501,50 +513,32 @@ function doSearchPlace(){
 		success: function(json){
 			
 			if(json){
-				
+				$("div#results").html("");
 				var place = $.parseJSON(json);
-				var placeLat = place.placeLat;
-				var placeLong = place.placeLong;
-				myLatLng = new google.maps.LatLng(placeLat,placeLong);
-				
-				/*Set the map marker position*/
-				var markerPosition = myLatLng;
-				
-				if (marker){
-					marker.setPosition(markerPosition);
-				}else{
-					marker = new google.maps.Marker({
-					    position: markerPosition,
-					    map: map,
-					    title: place.placeName
-					      
-					});
-					
+				if(place.length > 1) {
+					for(var i = 0; i < place.length; i++) {
+						$("div#results").append('<a class="place-link" data-placename="'+place[i].placeName +'" data-latitude="' +place[i].placeLat + '" data-longitude="'+place[i].placeLong +'">' + place[i].placeName + '</a><br />');
+					}
+					$(document).ready(function() {
+			    	    $(".place-link").click(function() {
+			    	    	var placeLat = $(this).data("latitude");
+			    	    	var placeLong = $(this).data("longitude");
+			    	    	var placeName = $(this).data("placename");
+			    	    	panToLatLng(placeName,placeLat,placeLong);
+			    	    });
+			    	});
 				}
-				infoWindow.close();
-				marker.setMap(map);
-				
-				zoomFluid = map.getZoom();
-				map.panTo(myLatLng);
-				zoomTo();
-			
-			
-				
-				
-				/*--------------------------------------------------
-				Object: marker
-				Event: click
-				Function: Shows information box about UP 
-				-----------------------------------------------------*/
-				google.maps.event.addListener(marker, 'click', function() {
-					
-					infoWindow.setContent(place.placeName);
-				    infoWindow.open(map,marker);
-				});
+				else {
+										
+					var placeLat = place[0].placeLat;
+					var placeLong = place[0].placeLong;
+					var placeName = place[0].placeName;
+					panToLatLng(placeName,placeLat,placeLong);
+				}
 				
 			}else{
 				
-				document.getElementById('errormessage').innerHTML="Sorry, no results found.";
+				document.getElementById('results').innerHTML="Sorry, no results found.";
 			}
 			
 			
@@ -558,6 +552,8 @@ function doSearchPlace(){
 		
 	});
 }
+
+
 
 function zoomTo(){
     //console.log(zoomFluid);
@@ -593,3 +589,4 @@ function searchPlaceEnter() {
 	doSearchPlace();
 
 }
+

@@ -39,7 +39,7 @@
     	//Sets map wrapper height when page has resized
     	$(window).resize(setWrapperHeight); 
     	
-    
+    	
     </script>
     
     
@@ -82,8 +82,10 @@
 	  				</table>
 	  			</form>
 	  			
-	  			<div id="errormessage">
+	  			<div id="results">
+	  			
 	  			</div>
+	  	
 	  			
 	  			<form id="route1" >
 	  				<h3>Jeepney Routes</h3>
