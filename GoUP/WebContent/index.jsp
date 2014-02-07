@@ -1,1 +1,1 @@
-<%response.sendRedirect("home");%>
+<%response.sendRedirect(new String("home"));%>

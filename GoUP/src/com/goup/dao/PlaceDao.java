@@ -7,10 +7,11 @@ package com.goup.dao;
 
 //import java.util.List;
 import com.goup.domain.Place;
+import java.util.*;
 
 public interface PlaceDao {
 	
 	public void insertData(Place place);
-	public Place searchPlaceByName(String placeName);
+	public List<Place> searchPlaceByName(String placeName);
 	
 }

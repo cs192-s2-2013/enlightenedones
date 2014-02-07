@@ -461,43 +461,50 @@ function doSearchPlace(){
 		success: function(json){
 			
 			if(json){
-				
+				$("div#results").html("");
 				var place = $.parseJSON(json);
-				var placeLat = place.placeLat;
-				var placeLong = place.placeLong;
-				myLatLng = new google.maps.LatLng(placeLat,placeLong);
-				map.setZoom(15);
-				map.panTo(myLatLng);
-				setTimeout("map.setZoom(17)",1000); 
-			
-			
-				/*Set the map marker position*/
-				var markerPosition = myLatLng;
-				
-				if (marker){
-					marker.setPosition(markerPosition);
-				}else{
-					marker = new google.maps.Marker({
-					    position: markerPosition,
-					    map: map,
-					    title: place.placeName
-					      
-					});
-					
+				if(place.length > 1) {
+					for(var i = 0; i < place.length; i++) {
+						$("div#results").append('<a href="">' + place[i].placeName + '</a><br />');
+					}
 				}
-				infoWindow.close();
-				marker.setMap(map);
+				else {
+					var placeLat = place[0].placeLat;
+					var placeLong = place[0].placeLong;
+					myLatLng = new google.maps.LatLng(placeLat,placeLong);
+					map.setZoom(15);
+					map.panTo(myLatLng);
+					setTimeout("map.setZoom(17)",1000); 
 				
-				/*--------------------------------------------------
-				Object: marker
-				Event: click
-				Function: Shows information box about UP 
-				-----------------------------------------------------*/
-				google.maps.event.addListener(marker, 'click', function() {
+				
+					/*Set the map marker position*/
+					var markerPosition = myLatLng;
 					
-					infoWindow.setContent(place.placeName);
-				    infoWindow.open(map,marker);
-				});
+					if (marker){
+						marker.setPosition(markerPosition);
+					}else{
+						marker = new google.maps.Marker({
+						    position: markerPosition,
+						    map: map,
+						    title: place.placeName
+						      
+						});
+						
+					}
+					infoWindow.close();
+					marker.setMap(map);
+					
+					/*--------------------------------------------------
+					Object: marker
+					Event: click
+					Function: Shows information box about UP 
+					-----------------------------------------------------*/
+					google.maps.event.addListener(marker, 'click', function() {
+						
+						infoWindow.setContent(place.placeName);
+					    infoWindow.open(map,marker);
+					});
+				}
 				
 			}else{
 				

@@ -1,7 +1,7 @@
 package com.goup.services;
 
 
-//import java.util.List;  
+import java.util.List;  
 
 import org.springframework.beans.factory.annotation.Autowired;  
 import com.goup.dao.PlaceDao;  
@@ -18,7 +18,7 @@ public class PlaceServiceImpl implements PlaceService {
 	 }  
 	
 	@Override
-	public Place searchPlaceByName(String placeName){
+	public List<Place> searchPlaceByName(String placeName){
 		return placedao.searchPlaceByName(placeName);
 	}
 }

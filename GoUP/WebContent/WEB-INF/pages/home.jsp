@@ -82,6 +82,8 @@
 	  				</table>
 	  			</form>
 	  			
+	  			<div id="results">
+	  			</div>
 	  			<div id="errormessage">
 	  			</div>
 	  			
