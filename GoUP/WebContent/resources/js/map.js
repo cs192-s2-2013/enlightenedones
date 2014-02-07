@@ -451,9 +451,17 @@ function allRoute (){
 	}
 	
 }
+var previousPlace=null;
+var zoomFluid;
 
 function doSearchPlace(){
+	
 	var placeName = $('#searchPlaceName').val();
+	if(previousPlace==placeName)
+		return false;
+	
+	previousPlace = placeName;
+	
 	$.ajax({
 		type: "Get",
 		url: "/UPMap/findPlace",
@@ -466,11 +474,7 @@ function doSearchPlace(){
 				var placeLat = place.placeLat;
 				var placeLong = place.placeLong;
 				myLatLng = new google.maps.LatLng(placeLat,placeLong);
-				map.setZoom(15);
-				map.panTo(myLatLng);
-				setTimeout("map.setZoom(17)",1000); 
-			
-			
+				
 				/*Set the map marker position*/
 				var markerPosition = myLatLng;
 				
@@ -487,6 +491,13 @@ function doSearchPlace(){
 				}
 				infoWindow.close();
 				marker.setMap(map);
+				
+				zoomFluid = map.getZoom();
+				map.panTo(myLatLng);
+				zoomTo();
+			
+			
+				
 				
 				/*--------------------------------------------------
 				Object: marker
@@ -516,6 +527,15 @@ function doSearchPlace(){
 	});
 }
 
+function zoomTo(){
+    //console.log(zoomFluid);
+    if(zoomFluid==17) return 0;
+    else {
+         zoomFluid ++;
+         map.setZoom(zoomFluid);
+         setTimeout("zoomTo()", 500);
+    }
+}
 
 /*----------------------------------------------------
 Object: window
@@ -523,6 +543,8 @@ Event: load
 Function: initializes the map on window load
 ------------------------------------------------------*/
 google.maps.event.addDomListener(window, 'load', initialize);
+
+
 
 
 function searchPlaceEnter() {

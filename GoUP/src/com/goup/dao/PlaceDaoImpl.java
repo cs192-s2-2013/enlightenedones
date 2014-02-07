@@ -42,6 +42,12 @@ public class PlaceDaoImpl implements PlaceDao {
 		placeList = jdbcTemplate.query(sql, new PlaceRowMapper());
 		if(placeList.size()>0)
 			return placeList.get(0);
+		
+		sql = "select * from place where place_name Like '%"+placeName+ "%'";
+		placeList = jdbcTemplate.query(sql, new PlaceRowMapper());
+		
+		if(placeList.size()>0)
+			return placeList.get(0);
 		else
 			return null;
 	}
