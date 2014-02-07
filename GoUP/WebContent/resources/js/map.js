@@ -7,6 +7,10 @@ var upTokiRoutePath;
 var upKatipRoutePath;
 var upPhilcRoutePath;
 var visiblePath = [0,0,0,0,0];
+var lineSymbol = {
+	    path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+	  };
+
 
 var upMapBoundaryCoordinates = [
   	                           	new google.maps.LatLng(14.662367,121.044873),
@@ -332,7 +336,11 @@ function initialize() {
              geodesic: true,
              strokeColor: '#fff000',
              strokeOpacity: 0.70,
-             strokeWeight: 3
+             strokeWeight: 3,
+             icons: [{
+                 icon: lineSymbol,
+                 offset: '100%'
+               }]
            });
 	
 	upTokiRoutePath = new google.maps.Polyline({
@@ -340,7 +348,11 @@ function initialize() {
              geodesic: true,
              strokeColor: '#7f00ff',
              strokeOpacity: 0.70,
-             strokeWeight: 3
+             strokeWeight: 3,
+             icons: [{
+                 icon: lineSymbol,
+                 offset: '100%'
+               }]
            });
 
 	
@@ -349,7 +361,11 @@ function initialize() {
              geodesic: true,
              strokeColor: '#f00',
              strokeOpacity: 0.70,
-             strokeWeight: 3
+             strokeWeight: 3,
+             icons: [{
+                 icon: lineSymbol,
+                 offset: '100%'
+               }]
            });
 
 	
@@ -358,7 +374,11 @@ function initialize() {
              geodesic: true,
              strokeColor: '#0f0',
              strokeOpacity: 0.70,
-             strokeWeight: 3
+             strokeWeight: 3,
+             icons: [{
+                 icon: lineSymbol,
+                 offset: '100%'
+               }]
            });
 
 	/*----------------------------------------------------
@@ -375,9 +395,17 @@ function initialize() {
 	
 	}
 
+function setMapAtCenter(){
+	var myLatlng = new google.maps.LatLng(14.649361,121.055725);
+	zoomFluid= map.getZoom();
+	map.panTo(myLatlng);
+	zoomOut();
+}
+
 
 function ikotRoute (){
 	
+	setMapAtCenter();
 	if(visiblePath[0]==0){
 		upIkotRoutePath.setMap(map);
 		visiblePath[0]=1;
@@ -392,6 +420,7 @@ function ikotRoute (){
 }
 
 function tokiRoute (){
+	setMapAtCenter();
 	if(visiblePath[1]==0){
 		upTokiRoutePath.setMap(map);
 		visiblePath[1]=1;
@@ -404,6 +433,7 @@ function tokiRoute (){
 }
 
 function katipRoute (){
+	setMapAtCenter();
 	if(visiblePath[2]==0){
 		upKatipRoutePath.setMap(map);
 		visiblePath[2]=1;
@@ -415,6 +445,7 @@ function katipRoute (){
 	}
 }
 function philcRoute (){
+	setMapAtCenter();
 	if(visiblePath[3]==0){
 		upPhilcRoutePath.setMap(map);
 		visiblePath[3]=1;
@@ -428,6 +459,7 @@ function philcRoute (){
 
 function allRoute (){
 	
+	setMapAtCenter();
 	if(visiblePath[4]==0){
 		upIkotRoutePath.setMap(map);
 		upTokiRoutePath.setMap(map);
@@ -537,6 +569,15 @@ function zoomTo(){
     }
 }
 
+function zoomOut(){
+    //console.log(zoomFluid);
+    if(zoomFluid==15) return 0;
+    else {
+         zoomFluid --;
+         map.setZoom(zoomFluid);
+         setTimeout("zoomOut()", 500);
+    }
+}
 /*----------------------------------------------------
 Object: window
 Event: load
