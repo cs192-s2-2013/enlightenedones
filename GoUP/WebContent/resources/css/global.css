@@ -44,22 +44,18 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 	position:relative;
 	top:0;
 	left: 0;
-	width: 100%
-	height: 100%;
 	background-color: #fff;
-	
+	padding-left: 10px !important;
+	padding-right: 10px !important;
 }
 
 .side-box-inner{
 
 	padding-top: 120px;
-	padding-left: 20px;
-	padding-right: 20px;
+	padding-left: 10px !important;
+	padding-right: 10px !important;
 }
 
-.side-box-inner input {
-	margin-left: 5px;
-}
 
 #nav ul {
 	position:absolute;
@@ -105,6 +101,11 @@ input.form-control {
 	outline: 0 !important;
 }
 
+#errormessage {
+	padding-top:20px;
+	
+}
+
 .overlay {
 	position: absolute;	
 	z-index: 99999;
@@ -127,7 +128,7 @@ input.form-control {
 	background-image: url(../img/logo.png);
 	background-size: cover;
 	top: 30px;
-	margin-left:10px;
+	margin-left:5px;
 	
 }
 
@@ -258,4 +259,37 @@ input.form-control {
 
 .peyup {
 	color: #8A1212 !important;
+}
+
+
+.btn-route {
+	width: 120px;
+	border-radius: 2px;
+	color: #fff;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+.btn-ikot {
+	background-color: #f1c40f;
+	border-color:#f39c12;
+}
+
+.btn-ikot:hover,.btn-ikot:focus {
+	background-color: #f39c12;
+	color: #fff;
+
+}
+
+
+.btn-toki {
+	background-color: #9b59b6;
+	border-color: #8e44ad;
+	
+}
+
+.btn-toki:hover, .btn-toki:focus {
+	background-color: #8e44ad;
+	color: #fff;
+
 }
