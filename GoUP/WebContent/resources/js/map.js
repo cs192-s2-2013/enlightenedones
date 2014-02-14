@@ -5,8 +5,7 @@ var map;
 var marker;
 var markerArray =[];
 var infoWindow = new google.maps.InfoWindow({
-	maxwidth: 500,
-	noSupress: true
+	maxwidth: 500
 }
 );
 var zoomFluid;
@@ -21,6 +20,10 @@ var upTokiRoutePath;
 var upKatipRoutePath;
 var upPhilcRoutePath;
 var visiblePath = [0,0,0,0,0];
+var markerArray = [];
+
+var directionsDisplay;
+var directionsService = new google.maps.DirectionsService();
 
 var upMapBoundaryCoordinates = [
   	                           	new google.maps.LatLng(14.662367,121.044873),
@@ -183,10 +186,7 @@ var upTokiRouteCoordinates = [
 								new google.maps.LatLng(14.650462, 121.073744), //curve again
 								new google.maps.LatLng(14.648230, 121.073765), //CP Garcia
 								new google.maps.LatLng(14.648188, 121.072531), 
-								new google.maps.LatLng(14.647597, 121.071383),
-								new google.maps.LatLng(14.648562, 121.070761), //Math
-								new google.maps.LatLng(14.648531, 121.070697),
-								new google.maps.LatLng(14.647576, 121.071319), //CPG again
+								new google.maps.LatLng(14.647597, 121.071383), //used to be path to Math
 								new google.maps.LatLng(14.647327, 121.070907),
 								new google.maps.LatLng(14.647187, 121.070124),
 								new google.maps.LatLng(14.647171, 121.068986),
@@ -316,31 +316,19 @@ var upPhilcRouteCoordinates = [
 								new google.maps.LatLng(14.657525,121.072742)
                              
                              ];
-
-function fixInfoWindow() {
-    //Here we redefine set() method.
-    //If it is called for map option, we hide InfoWindow, if "noSupress" option isnt true.
-    //As Google doesn't know about this option, its InfoWindows will not be opened.
-    var set = google.maps.InfoWindow.prototype.set;
-    google.maps.InfoWindow.prototype.set = function (key, val) {
-        if (key === 'map') {
-            if (!this.get('noSupress')) {
-                console.log('This InfoWindow is supressed. To enable it, set "noSupress" option to true');
-                return;
-            }
-        }
-        set.apply(this, arguments);
-    };
-   
-}
+//var testing = "}cmxAcc~aVO?C?C@k@l@";
+//var testingarray = google.maps.geometry.encoding.decodePath(testing);
 
 
 
 function initialize() {
 	directionsDisplay = new google.maps.DirectionsRenderer();
 
+
 	
 	var myLatlng = new google.maps.LatLng(14.651147,121.060274); 
+
+
   	var mapOptions = {
     		center: myLatlng,
     		zoom: 15,
@@ -351,7 +339,6 @@ function initialize() {
       	mapOptions);
   	directionsDisplay.setMap(map);
 
-  	
   	
   	var upMapBoundaryPath = new google.maps.Polyline({
   	                 path: upMapBoundaryCoordinates,
@@ -424,12 +411,53 @@ function initialize() {
 
 	 	map.panTo(myLatlng);
 	    map.setZoom(15);
+	    
 	  
 	});	
 	
 	
 	}
 
+
+function calcRoute(originLatLngStr, destinationLatLngStr) {
+	 for (var i = 0; i < markerArray.length; i++) {
+	    markerArray[i].setMap(null);
+	  }
+	  markerArray = [];
+	  
+	  var request = {
+	      origin:originLatLngStr,
+	      destination:destinationLatLngStr,
+	      travelMode:google.maps.TravelMode.WALKING
+	  };
+	  directionsService.route(request, function(response, status) {
+	    if (status == google.maps.DirectionsStatus.OK) {
+	      directionsDisplay.setDirections(response);
+	      showSteps(response);
+	    }
+	  });
+	  
+}
+
+function showSteps(directionResult) {
+	  var myRoute = directionResult.routes[0].legs[0];
+
+	  for (var i = 0; i < myRoute.steps.length; i++) {
+	    var marker = new google.maps.Marker({
+	      position: myRoute.steps[i].start_location,
+	      map: map
+	    });
+	    attachInstructionText(marker, myRoute.steps[i].instructions);
+	    markerArray[i] = marker;
+	  }
+	}
+
+function attachInstructionText(marker, text) {
+	  google.maps.event.addListener(marker, 'click', function() {
+	    stepDisplay.setContent(text);
+	    stepDisplay.open(map, marker);
+	  });
+}
 
 
 function setInitPanAndZoom(){
@@ -538,18 +566,55 @@ function clearMarkers(){
 	markerArray = [];
 }
 
+var autoCompleteCategory = "";
+function getAllPlaceNames(){
+	
+	var availablePlaceNames = [];
+	$.ajax({
+		type: "Get",
+		url: "/UPMap/findPlaceByCategoryAndName",
+		data: "category=" + autoCompleteCategory +"&placeName=" +"",
+		success: function(json){
+		
+			if(json){
+			
+				
+				var place = $.parseJSON(json);
+				if(place) {
+				
+					
+					for(var i = 0; i < place.length; i++) {
+						availablePlaceNames.push(place[i].placeName);
+					}
+				}
+			}
+			
+						
+		},
+		error: function(e){
+			alert("Error: "+ e);
+		}
+		
+	});
+	
+	$( "#searchPlaceName" ).autocomplete({
+		source: availablePlaceNames
+	});
+}
+
 function doSearchOptimized(category,placeName){
+	
 	
 	clearMarkers();
 	
 	setInitPanAndZoom();
-	$("div#results").html("");
+	
 	$.ajax({
 		type: "Get",
 		url: "/UPMap/findPlaceByCategoryAndName",
 		data: "category=" + category +"&placeName=" +placeName,
 		success: function(json){
-			
+			$("div#results").html("");
 			if(json){
 			
 				
@@ -632,13 +697,25 @@ function doSearchOptimized(category,placeName){
 	
 }
 
+
+
+	
+	
 function categoryOnChange(){
 	
 	var category = $( "#categorySelect option:selected" ).val();
 	var placeName = $('#searchPlaceName').val();
 	
-	if(category=="" && placeName=="")
+	autoCompleteCategory = category;
+	getAllPlaceNames();
+	
+	
+	if(category=="" && placeName==""){
+		
+		clearMarkers();
 		$("div#results").html("");
+	}
+		
 	else
 		doSearchOptimized(category,placeName);
 	
@@ -677,6 +754,7 @@ function searchPlaceClick(){
 	
 	var category = $( "#categorySelect option:selected" ).val();
 	var placeName = $('#searchPlaceName').val();
+	if(placeName!="")
 	doSearchOptimized(category,placeName);
 
 }
@@ -685,7 +763,11 @@ function searchPlaceEnter() {
 	
 	var category = $( "#categorySelect option:selected" ).val();
 	var placeName = $('#searchPlaceName').val();
-	doSearchOptimized(category,placeName);
+	
+	$( "#searchPlaceName" ).autocomplete( "close" );
+	
+	if(placeName!="")
+		doSearchOptimized(category,placeName);
 	
 	
 }
@@ -696,15 +778,30 @@ function searchPlaceEnter() {
 
 $(document).keyup(function(e){
 	
-
+	
    if($('#searchPlaceName').is(':focus')) {
+	   
 	   
 	   var category = $( "#categorySelect option:selected" ).val();
 	   var placeName = $('#searchPlaceName').val();
 
 	   if(placeName!=""){
+		   
+		   if(e.keyCode == 32){
+			      
+			   doSearchOptimized(category, placeName);
+				
+		   }else if(e.keyCode==8){
+			   clearMarkers();
+			   $("div#results").html("");
+		   }
+		   
+		   
+		   
+	   }else if(category!=""&&placeName==""){
 		   doSearchOptimized(category, placeName);
-	   }else{
+	   }else if (category==""&&placeName==""){
+		   clearMarkers();
 		   $("div#results").html("");
 	   }
 	   
@@ -712,7 +809,6 @@ $(document).keyup(function(e){
    
 });
 
-
-
-
-
+$(document).ready(function(){
+	getAllPlaceNames();
+});

@@ -31,5 +31,7 @@ public class PlaceServiceImpl implements PlaceService {
 	public List<Place> searchPlaceByCategoryAndName(String category,String placeName){
 		return placedao.searchPlaceByCategoryAndName(category,placeName);
 	}
+	
+	
 }
 

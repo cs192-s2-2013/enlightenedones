@@ -10,21 +10,25 @@
     <link href="<c:url value="/resources/css/bootstrap.css" />" rel="stylesheet"/>
     <link href="<c:url value="/resources/css/font-awesome.css" />" rel="stylesheet"/>
     <link href="<c:url value="/resources/css/global.css" />" rel="stylesheet"/>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
     <!--End Including Stylesheets-->
     
     <!-- Include JS Plugins -->
-    <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+     
+
+    <script src="//code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
     <script src="<c:url value="/resources/js/bootstrap.js" />"></script>
-    <script type="text/javascript"src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCblPnV936VjhXRneHrOKPl_aB1hozPlFU&sensor=false">
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry&key=AIzaSyCblPnV936VjhXRneHrOKPl_aB1hozPlFU&sensor=false">
     </script>
-    <script src="<c:url value="/resources/js/map.js" />"></script>
+    <script type="text/javascript" src="<c:url value="/resources/js/map.js" />"></script>
+  
     <!--End Including JS Plugins-->
  	
  
         
-    <script>
-    
-	
+    <script type="text/javascript">
+    	//calcRoute("14.6542240000,121.0734100000", "14.6598450000,121.0709850000"); // calling function from here
     	/*-------------------------
     	Function: 	Gets the height of the window screen 
     				and sets it as the height of the map wrapper
@@ -39,12 +43,7 @@
     	//Sets map wrapper height when page has resized
     	$(window).resize(setWrapperHeight); 
     	
-    	
     </script>
-    
-    
-    
-    
     
   </head>
   <body>
@@ -77,8 +76,9 @@
 	  						<option value="DORMS">Dormitories</option>
 	  						
 	  					</select>
-	  					<input id="searchPlaceName" placeholder="Type the name of the place" type="text" class="form-control" onKeyUp="if (event.keyCode == 13) searchPlaceEnter();"/>
 	  					
+	  					<input id="searchPlaceName" placeholder="Type the name of the place" type="text" class="form-control" onKeyUp="if (event.keyCode == 13) searchPlaceEnter();"/>
+	  				
 	  					<input id="searchButton" class="btn btn-primary" type="button" value="Search" onclick="searchPlaceClick();" />
 	  				
 	  			</form>

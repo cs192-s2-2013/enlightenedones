@@ -67,6 +67,7 @@ public class HomePageController {
 		}else{
 			String json= "";
 			try {
+
 				json = mapper.writeValueAsString(placelist);
 			} catch (JsonGenerationException e) {
 			       e.printStackTrace();
@@ -127,6 +128,8 @@ public class HomePageController {
 			String json= "";
 			try {
 				json = mapper.writeValueAsString(placelist);
+
+
 			} catch (JsonGenerationException e) {
 			       e.printStackTrace();
 		    } catch (JsonMappingException e) {
@@ -134,12 +137,36 @@ public class HomePageController {
 		    } catch (IOException e) {
 		       e.printStackTrace();
 		    }
-			//System.out.println(test);
 			return json;
 			
-			
 		}
-		
 		 
 	} 
+	
+	@RequestMapping(value="/getAllPlaceNames",method=RequestMethod.GET )
+	public @ResponseBody String getAllPlaceNames() {  
+		
+		ObjectMapper mapper = new ObjectMapper();
+		List<Place> placelist = null;
+		placelist = placeService.getAllPlaceNames();
+		
+		if(placelist==null){
+			return null;
+		}else{
+			String json= "";
+			try {
+				json = mapper.writeValueAsString(placelist);
+
+
+			} catch (JsonGenerationException e) {
+			       e.printStackTrace();
+		    } catch (JsonMappingException e) {
+		       e.printStackTrace();
+		    } catch (IOException e) {
+		       e.printStackTrace();
+		    }
+			return json;
+			
+		}
+	}
 }
