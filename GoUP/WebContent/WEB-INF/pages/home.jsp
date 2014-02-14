@@ -51,9 +51,11 @@
 
 	<!-- begin of map-wrapper -->
 	<div id="side-box" class="col-md-3">
-	
-		<div id="goup-logo" class="overlay circle logo">
-    	</div>
+		
+			<div class="side-box-header">
+				<div id="goup-logo" class="circle logo">
+		    	</div>
+    		</div>
 	
 	  		<div class="side-box-inner">
 	  			<%
@@ -68,18 +70,17 @@
 	  			
 	  			<form id="searchPlace" onkeypress="return event.keyCode != 13;">
 	  				<h3>Search Place</h3>
-	  				<table>
+	  	
+	  					<select id="categorySelect" onchange="categoryOnChange();">
+	  						<option value="">Select a category</option>
+	  						<option value="AAS">Administration and Support</option>
+	  						<option value="DORMS">Dormitories</option>
+	  						
+	  					</select>
+	  					<input id="searchPlaceName" placeholder="Type the name of the place" type="text" class="form-control" onKeyUp="if (event.keyCode == 13) searchPlaceEnter();"/>
+	  					
+	  					<input id="searchButton" class="btn btn-primary" type="button" value="Search" onclick="searchPlaceClick();" />
 	  				
-	  					<tr>
-	  					
-	  					<td><input id="searchPlaceName" placeholder="Type the name of the place" type="text" class="form-control" onKeyUp="if (event.keyCode == 13) searchPlaceEnter();"/></td>
-	  					<td><input class="btn btn-primary" type="button" value="Search" onclick="doSearchPlace();" /></td>
-	  					</tr>
-	  					
-	  				  					
-	  					
-	  					
-	  				</table>
 	  			</form>
 	  			
 	  			<div id="results">

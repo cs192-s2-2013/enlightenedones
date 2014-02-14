@@ -35,25 +35,11 @@ public class PlaceDaoImpl implements PlaceDao {
 				
 	}
 	
-	public List<Place> searchPlaceByName(String placeName){
+	public List<Place> searchPlace(String str){
 		List<Place> placeList = new ArrayList<Place>();
-		String sql = "select * from place where place_name= \"" + placeName +"\"";
+		String sql = "select * from place right join categories on place.place_category=categories.category_id where place_name like \"%" + str +"%\" or place_category like \"%" + str +"%\" or place_category in (select category_id from categories" +
+				" where category_name like \"%" + str +"%\")";
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-		placeList = jdbcTemplate.query(sql, new PlaceRowMapper());
-		if(placeList.size()>0)
-			return placeList;
-		
-		sql = "select * from place where place_category= \"" + placeName +"\"";
-		placeList = jdbcTemplate.query(sql, new PlaceRowMapper());
-		if(placeList.size()>0)
-			return placeList;
-			
-		sql = "select * from place where place_category like \"%" + placeName +"%\"";
-		placeList = jdbcTemplate.query(sql, new PlaceRowMapper());
-		if(placeList.size()>0)
-			return placeList;
-		
-		sql = "select * from place where place_name like \"%" + placeName +"%\"";
 		placeList = jdbcTemplate.query(sql, new PlaceRowMapper());
 		if(placeList.size()>0)
 			return placeList;
@@ -62,6 +48,39 @@ public class PlaceDaoImpl implements PlaceDao {
 		
 	}
 	
+	public List<Place> searchPlaceByCategory(String category){
+		
+		List<Place> placeList = new ArrayList<Place>();
+		String sql = "select * from place right join categories on place.place_category=categories.category_id where place_category like \"%" + category +"%\"";
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+		placeList = jdbcTemplate.query(sql, new PlaceRowMapper());
+		
+		if(placeList.size()>0)
+			return placeList;
+	
+		else
+			return null;
+		
+	}
+	
+	
+	public List<Place> searchPlaceByCategoryAndName(String category, String placeName){
+		
+		List<Place> placeList = new ArrayList<Place>();
+		String sql = "select * from place right join categories on place.place_category=categories.category_id where place_category like \"%" + category +"%\" " +
+				"and (place_name like \"%" + placeName +"%\" or place_category like \"%" +placeName + 
+				"%\" or place_category in (select category_id from categories" +
+				" where category_name like \"%" + placeName +"%\"))";
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+		placeList = jdbcTemplate.query(sql, new PlaceRowMapper());
+		
+		if(placeList.size()>0)
+			return placeList;
+	
+		else
+			return null;
+		
+	}
 	
 	
 }

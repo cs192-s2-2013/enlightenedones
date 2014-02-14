@@ -1,8 +1,21 @@
+var directionsDisplay;
+var directionsService = new google.maps.DirectionsService();
+
 var map;
 var marker;
-var infoWindow = new google.maps.InfoWindow();
+var markerArray =[];
+var infoWindow = new google.maps.InfoWindow({
+	maxwidth: 500,
+	noSupress: true
+}
+);
 var zoomFluid;
- 
+
+
+var lineSymbol = {
+	    path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+	  };
+
 var upIkotRoutePath;
 var upTokiRoutePath;
 var upKatipRoutePath;
@@ -304,17 +317,40 @@ var upPhilcRouteCoordinates = [
                              
                              ];
 
+function fixInfoWindow() {
+    //Here we redefine set() method.
+    //If it is called for map option, we hide InfoWindow, if "noSupress" option isnt true.
+    //As Google doesn't know about this option, its InfoWindows will not be opened.
+    var set = google.maps.InfoWindow.prototype.set;
+    google.maps.InfoWindow.prototype.set = function (key, val) {
+        if (key === 'map') {
+            if (!this.get('noSupress')) {
+                console.log('This InfoWindow is supressed. To enable it, set "noSupress" option to true');
+                return;
+            }
+        }
+        set.apply(this, arguments);
+    };
+   
+}
+
+
+
 function initialize() {
+	directionsDisplay = new google.maps.DirectionsRenderer();
+
 	
-	var myLatlng = new google.maps.LatLng(14.649361,121.055725); 
+	var myLatlng = new google.maps.LatLng(14.651147,121.060274); 
   	var mapOptions = {
     		center: myLatlng,
     		zoom: 15,
-    		disableDefaultUI: false
+    		disableDefaultUI: false,
+    		clickableLabels:false 
   	};
   	map = new google.maps.Map(document.getElementById("map-canvas"),
       	mapOptions);
-  	
+  	directionsDisplay.setMap(map);
+
   	
   	
   	var upMapBoundaryPath = new google.maps.Polyline({
@@ -332,16 +368,25 @@ function initialize() {
              path: upIkotRouteCoordinates,
              geodesic: true,
              strokeColor: '#fff000',
-             strokeOpacity: 0.70,
-             strokeWeight: 3
+             strokeOpacity: 0.80,
+             strokeWeight: 4,
+             icons: [{
+                 icon: lineSymbol,
+                 offset: '100%'
+               }]
+
            });
 	
 	upTokiRoutePath = new google.maps.Polyline({
              path: upTokiRouteCoordinates,
              geodesic: true,
              strokeColor: '#7f00ff',
-             strokeOpacity: 0.70,
-             strokeWeight: 3
+             strokeOpacity: 0.80,
+             strokeWeight: 4,
+             icons: [{
+                 icon: lineSymbol,
+                 offset: '100%'
+               }]
            });
 
 	
@@ -349,8 +394,12 @@ function initialize() {
              path: upKatipRouteCoordinates,
              geodesic: true,
              strokeColor: '#f00',
-             strokeOpacity: 0.70,
-             strokeWeight: 3
+             strokeOpacity: 0.80,
+             strokeWeight: 4,
+             icons: [{
+                 icon: lineSymbol,
+                 offset: '100%'
+               }]
            });
 
 	
@@ -358,8 +407,12 @@ function initialize() {
              path: upPhilcRouteCoordinates,
              geodesic: true,
              strokeColor: '#0f0',
-             strokeOpacity: 0.70,
-             strokeWeight: 3
+             strokeOpacity: 0.80,
+             strokeWeight: 4,
+             icons: [{
+                 icon: lineSymbol,
+                 offset: '100%'
+               }]
            });
 
 	/*----------------------------------------------------
@@ -371,15 +424,19 @@ function initialize() {
 
 	 	map.panTo(myLatlng);
 	    map.setZoom(15);
+	  
 	});	
 	
 	
 	}
 
+
+
 function setInitPanAndZoom(){
 	
-	var myLatlng = new google.maps.LatLng(14.649361,121.055725); 
+	var myLatlng = new google.maps.LatLng(14.651147,121.060274); 
 	map.panTo(myLatlng);
+	zoomFluid = map.getZoom();
 	zoomOut();
 }
 function ikotRoute (){
@@ -459,86 +516,107 @@ function allRoute (){
 	
 }
 
-function panToLatLng(placeName,placeLat,placeLong){
+function panToLatLng(placeLat,placeLong){
 	var myLatLng = new google.maps.LatLng(placeLat,placeLong);
 
-	/*Set the map marker position*/
-	var markerPosition = myLatLng;
-	
-	if (marker){
-		marker.setPosition(markerPosition);
-	}else{
-		marker = new google.maps.Marker({
-		    position: markerPosition,
-		    map: map,
-		    title: placeName
-		      
-		});
-		
-	}
-	infoWindow.close();
-	marker.setMap(map);
 	
 	zoomFluid = map.getZoom();
 	map.panTo(myLatLng);
-	zoomTo();
+	if(zoomFluid<=17)
+		zoomTo();
+	else
+		zoomOut();
 	
-	/*--------------------------------------------------
-	Object: marker
-	Event: click
-	Function: Shows information box about UP 
-	-----------------------------------------------------*/
-	google.maps.event.addListener(marker, 'click', function() {
-		
-		infoWindow.setContent(place.placeName);
-	    infoWindow.open(map,marker);
-	});
+	
 	
 }
 
-var previousPlace=null;
+function clearMarkers(){
+	for(var i=0;i<markerArray.length;i++){
+		markerArray[i].setMap(null);
+	}
+	markerArray = [];
+}
 
-
-function doSearchPlace(){
-	var placeName = $('#searchPlaceName').val();
+function doSearchOptimized(category,placeName){
 	
-	if(previousPlace==placeName)
-		return false;
-
-		previousPlace = placeName;
+	clearMarkers();
+	
+	setInitPanAndZoom();
+	$("div#results").html("");
 	$.ajax({
 		type: "Get",
-		url: "/UPMap/findPlace",
-		data: "placeName=" + placeName,
+		url: "/UPMap/findPlaceByCategoryAndName",
+		data: "category=" + category +"&placeName=" +placeName,
 		success: function(json){
 			
 			if(json){
-				$("div#results").html("");
+			
+				
 				var place = $.parseJSON(json);
-				if(place.length > 1) {
+				if(place) {
+					if(place.length>1)
+						$("div#results").append('<p>'+ place.length +' results found.</p>');
+					else
+						$("div#results").append('<p>'+ place.length +' result found.</p>');
+					
+					
 					for(var i = 0; i < place.length; i++) {
-						$("div#results").append('<a class="place-link" data-placename="'+place[i].placeName +'" data-latitude="' +place[i].placeLat + '" data-longitude="'+place[i].placeLong +'">' + place[i].placeName + '</a><br />');
+						count=i+1;
+						$("div#results").append('<div class="col-md-1"><a class="map-marker">'+count+'</a></div>');
+						$("div#results").append('<div class="col-md-11 results-item"><a class="place-link" data-placename="'+place[i].placeName +'" data-latitude="' +place[i].placeLat + '" data-longitude="'+place[i].placeLong +'">' + place[i].placeName + '</a><br />'
+								+ '<p class="small-note">Category: <a>'+ place[i].placeCategory +'</a></p></div>');
+						
+						var markerPosition = new google.maps.LatLng(place[i].placeLat,place[i].placeLong);
+						var newMarker = new google.maps.Marker({
+						    position: markerPosition,
+						    map: map,
+						    title: place[i].placeName
+						      
+						});
+						
+						var markerIcon = new google.maps.MarkerImage(
+							    'resources/img/marker'+count+'.png',
+							    null, /* size is determined at runtime */
+							    null, /* origin is 0,0 */
+							    null, /* anchor is bottom center of the scaled image */
+							    new google.maps.Size(32,45)
+							);  
+						newMarker.setIcon(markerIcon);
+						markerArray.push(newMarker);
+						newMarker.setMap(map);
+						
+						/*--------------------------------------------------
+						Object: marker
+						Event: click
+						Function: Shows information box about UP 
+						-----------------------------------------------------*/
+						google.maps.event.addListener(newMarker, 'click', function() {
+							zoomFluid = map.getZoom();
+							infoWindow.close();
+							map.panTo(this.getPosition());
+							infoWindow.setContent('<div class="info-window"><p>'+this.getTitle()+'</p></div>');
+							infoWindow.open(map, this);
+							if(zoomFluid<=17)
+								zoomTo();
+							else
+								zoomOut();
+				
+						});
+						
 					}
 					$(document).ready(function() {
 			    	    $(".place-link").click(function() {
 			    	    	var placeLat = $(this).data("latitude");
 			    	    	var placeLong = $(this).data("longitude");
-			    	    	var placeName = $(this).data("placename");
-			    	    	panToLatLng(placeName,placeLat,placeLong);
+			    	    	panToLatLng(placeLat,placeLong);
 			    	    });
 			    	});
 				}
-				else {
-										
-					var placeLat = place[0].placeLat;
-					var placeLong = place[0].placeLong;
-					var placeName = place[0].placeName;
-					panToLatLng(placeName,placeLat,placeLong);
-				}
-				
+			
 			}else{
-				
 				document.getElementById('results').innerHTML="Sorry, no results found.";
+				return false;
 			}
 			
 			
@@ -551,7 +629,21 @@ function doSearchPlace(){
 		}
 		
 	});
+	
 }
+
+function categoryOnChange(){
+	
+	var category = $( "#categorySelect option:selected" ).val();
+	var placeName = $('#searchPlaceName').val();
+	
+	if(category=="" && placeName=="")
+		$("div#results").html("");
+	else
+		doSearchOptimized(category,placeName);
+	
+}
+
 
 
 
@@ -581,12 +673,46 @@ Function: initializes the map on window load
 ------------------------------------------------------*/
 google.maps.event.addDomListener(window, 'load', initialize);
 
+function searchPlaceClick(){
+	
+	var category = $( "#categorySelect option:selected" ).val();
+	var placeName = $('#searchPlaceName').val();
+	doSearchOptimized(category,placeName);
 
-
+}
 
 function searchPlaceEnter() {
 	
-	doSearchPlace();
-
+	var category = $( "#categorySelect option:selected" ).val();
+	var placeName = $('#searchPlaceName').val();
+	doSearchOptimized(category,placeName);
+	
+	
 }
+
+
+
+
+
+$(document).keyup(function(e){
+	
+
+   if($('#searchPlaceName').is(':focus')) {
+	   
+	   var category = $( "#categorySelect option:selected" ).val();
+	   var placeName = $('#searchPlaceName').val();
+
+	   if(placeName!=""){
+		   doSearchOptimized(category, placeName);
+	   }else{
+		   $("div#results").html("");
+	   }
+	   
+   }
+   
+});
+
+
+
+
 

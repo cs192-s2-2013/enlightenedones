@@ -56,20 +56,77 @@ public class HomePageController {
 	}  
 	
 	@RequestMapping(value="/findPlace",method=RequestMethod.GET )
-	public @ResponseBody String getData(@RequestParam(value = "placeName") String placeName) {  
+	public @ResponseBody String getPlaceByName(@RequestParam(value = "placeName") String placeName) {  
 		
 		ObjectMapper mapper = new ObjectMapper();
-		List<Place> place = null;
-		place = placeService.searchPlaceByName(placeName);
+		List<Place> placelist = null;
+		placelist = placeService.searchPlaceByName(placeName);
 		
-		if(place==null){
+		if(placelist==null){
 			return null;
 		}else{
 			String json= "";
-			String test = "";
 			try {
-				//test = mapper.writeValueAsString(place);
-				json = mapper.writeValueAsString(place);
+				json = mapper.writeValueAsString(placelist);
+			} catch (JsonGenerationException e) {
+			       e.printStackTrace();
+		    } catch (JsonMappingException e) {
+		       e.printStackTrace();
+		    } catch (IOException e) {
+		       e.printStackTrace();
+		    }
+			//System.out.println(test);
+			return json;
+			
+			
+		}
+		
+		 
+	} 
+	
+	@RequestMapping(value="/findPlaceByCategory",method=RequestMethod.GET )
+	public @ResponseBody String getPlaceByCategory(@RequestParam(value = "category") String category) {  
+		
+		ObjectMapper mapper = new ObjectMapper();
+		List<Place> placelist = null;
+		placelist = placeService.searchPlaceByCategory(category);
+		
+		if(placelist==null){
+			return null;
+		}else{
+			String json= "";
+			try {
+				json = mapper.writeValueAsString(placelist);
+			} catch (JsonGenerationException e) {
+			       e.printStackTrace();
+		    } catch (JsonMappingException e) {
+		       e.printStackTrace();
+		    } catch (IOException e) {
+		       e.printStackTrace();
+		    }
+			//System.out.println(test);
+			return json;
+			
+			
+		}
+		
+		 
+	} 
+	
+	@RequestMapping(value="/findPlaceByCategoryAndName",method=RequestMethod.GET )
+	public @ResponseBody String getPlaceByCategoryAndName(@RequestParam(value = "category") String category,
+			@RequestParam(value ="placeName") String placeName) {  
+		
+		ObjectMapper mapper = new ObjectMapper();
+		List<Place> placelist = null;
+		placelist = placeService.searchPlaceByCategoryAndName(category,placeName);
+		
+		if(placelist==null){
+			return null;
+		}else{
+			String json= "";
+			try {
+				json = mapper.writeValueAsString(placelist);
 			} catch (JsonGenerationException e) {
 			       e.printStackTrace();
 		    } catch (JsonMappingException e) {

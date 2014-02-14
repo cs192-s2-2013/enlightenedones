@@ -5,6 +5,7 @@ public class Place {
 	private String placeName;
 	private double placeLat;
 	private double placeLong;
+	private String placeCategory;
 	
 	public String getPlaceName(){
 		return placeName;
@@ -28,6 +29,14 @@ public class Place {
 	
 	public void setPlaceLong(double placeLong){
 		this.placeLong = placeLong;
+	}
+	
+	public String getPlaceCategory(){
+		return placeCategory;
+	}
+	
+	public void setPlaceCategory(String placeCategory){
+		this.placeCategory = placeCategory;
 	}
 	
 }

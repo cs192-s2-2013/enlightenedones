@@ -19,7 +19,17 @@ public class PlaceServiceImpl implements PlaceService {
 	
 	@Override
 	public List<Place> searchPlaceByName(String placeName){
-		return placedao.searchPlaceByName(placeName);
+		return placedao.searchPlace(placeName);
+	}
+	
+	@Override
+	public List<Place> searchPlaceByCategory(String placeName){
+		return placedao.searchPlaceByCategory(placeName);
+	}
+	
+	@Override
+	public List<Place> searchPlaceByCategoryAndName(String category,String placeName){
+		return placedao.searchPlaceByCategoryAndName(category,placeName);
 	}
 }
 
