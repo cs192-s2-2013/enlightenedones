@@ -66,9 +66,7 @@ public class HomePageController {
 			return null;
 		}else{
 			String json= "";
-			String test = "";
 			try {
-				//test = mapper.writeValueAsString(place);
 				json = mapper.writeValueAsString(place);
 			} catch (JsonGenerationException e) {
 			       e.printStackTrace();
@@ -77,12 +75,9 @@ public class HomePageController {
 		    } catch (IOException e) {
 		       e.printStackTrace();
 		    }
-			//System.out.println(test);
 			return json;
 			
-			
 		}
-		
 		 
 	} 
 }

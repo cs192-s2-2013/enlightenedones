@@ -8,6 +8,10 @@ var upTokiRoutePath;
 var upKatipRoutePath;
 var upPhilcRoutePath;
 var visiblePath = [0,0,0,0,0];
+var markerArray = [];
+
+var directionsDisplay;
+var directionsService = new google.maps.DirectionsService();
 
 var upMapBoundaryCoordinates = [
   	                           	new google.maps.LatLng(14.662367,121.044873),
@@ -170,10 +174,7 @@ var upTokiRouteCoordinates = [
 								new google.maps.LatLng(14.650462, 121.073744), //curve again
 								new google.maps.LatLng(14.648230, 121.073765), //CP Garcia
 								new google.maps.LatLng(14.648188, 121.072531), 
-								new google.maps.LatLng(14.647597, 121.071383),
-								new google.maps.LatLng(14.648562, 121.070761), //Math
-								new google.maps.LatLng(14.648531, 121.070697),
-								new google.maps.LatLng(14.647576, 121.071319), //CPG again
+								new google.maps.LatLng(14.647597, 121.071383), //used to be path to Math
 								new google.maps.LatLng(14.647327, 121.070907),
 								new google.maps.LatLng(14.647187, 121.070124),
 								new google.maps.LatLng(14.647171, 121.068986),
@@ -303,9 +304,11 @@ var upPhilcRouteCoordinates = [
 								new google.maps.LatLng(14.657525,121.072742)
                              
                              ];
+//var testing = "}cmxAcc~aVO?C?C@k@l@";
+//var testingarray = google.maps.geometry.encoding.decodePath(testing);
 
 function initialize() {
-	
+	directionsDisplay = new google.maps.DirectionsRenderer();
 	var myLatlng = new google.maps.LatLng(14.649361,121.055725); 
   	var mapOptions = {
     		center: myLatlng,
@@ -314,8 +317,7 @@ function initialize() {
   	};
   	map = new google.maps.Map(document.getElementById("map-canvas"),
       	mapOptions);
-  	
-  	
+  	directionsDisplay.setMap(map);
   	
   	var upMapBoundaryPath = new google.maps.Polyline({
   	                 path: upMapBoundaryCoordinates,
@@ -375,6 +377,45 @@ function initialize() {
 	
 	
 	}
+
+function calcRoute(originLatLngStr, destinationLatLngStr) {
+	 for (var i = 0; i < markerArray.length; i++) {
+	    markerArray[i].setMap(null);
+	  }
+	  markerArray = [];
+	  
+	  var request = {
+	      origin:originLatLngStr,
+	      destination:destinationLatLngStr,
+	      travelMode:google.maps.TravelMode.WALKING
+	  };
+	  directionsService.route(request, function(response, status) {
+	    if (status == google.maps.DirectionsStatus.OK) {
+	      directionsDisplay.setDirections(response);
+	      showSteps(response);
+	    }
+	  });
+}
+
+function showSteps(directionResult) {
+	  var myRoute = directionResult.routes[0].legs[0];
+
+	  for (var i = 0; i < myRoute.steps.length; i++) {
+	    var marker = new google.maps.Marker({
+	      position: myRoute.steps[i].start_location,
+	      map: map
+	    });
+	    attachInstructionText(marker, myRoute.steps[i].instructions);
+	    markerArray[i] = marker;
+	  }
+	}
+
+function attachInstructionText(marker, text) {
+	  google.maps.event.addListener(marker, 'click', function() {
+	    stepDisplay.setContent(text);
+	    stepDisplay.open(map, marker);
+	  });
+}
 
 function setInitPanAndZoom(){
 	

@@ -15,16 +15,15 @@
     <!-- Include JS Plugins -->
     <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
     <script src="<c:url value="/resources/js/bootstrap.js" />"></script>
-    <script type="text/javascript"src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCblPnV936VjhXRneHrOKPl_aB1hozPlFU&sensor=false">
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry&key=AIzaSyCblPnV936VjhXRneHrOKPl_aB1hozPlFU&sensor=false">
     </script>
-    <script src="<c:url value="/resources/js/map.js" />"></script>
+    <script type="text/javascript" src="<c:url value="/resources/js/map.js" />"></script>
     <!--End Including JS Plugins-->
  	
  
         
-    <script>
-    
-	
+    <script type="text/javascript">
+    	calcRoute("14.6542240000,121.0734100000", "14.6598450000,121.0709850000"); // calling function from here
     	/*-------------------------
     	Function: 	Gets the height of the window screen 
     				and sets it as the height of the map wrapper
@@ -39,12 +38,7 @@
     	//Sets map wrapper height when page has resized
     	$(window).resize(setWrapperHeight); 
     	
-    	
     </script>
-    
-    
-    
-    
     
   </head>
   <body>
