@@ -73,6 +73,7 @@
 	  					<select id="categorySelect" onchange="categoryOnChange();">
 	  						<option value="">Select a category</option>
 	  						<option value="AAS">Administration and Support</option>
+	  						<option value="CSSP">College of Social Science and Philosophy</option>
 	  						<option value="DORMS">Dormitories</option>
 	  						
 	  					</select>
@@ -81,6 +82,13 @@
 	  				
 	  					<input id="searchButton" class="btn btn-primary" type="button" value="Search" onclick="searchPlaceClick();" />
 	  				
+	  			</form>
+	  			
+	  			<form id="findPath" onkeypress="return event.keyCode != 13;">
+	  				<h3>Find Path</h3>
+	  				<input id="searchOriginPlaceName" placeholder="origin" type="text" class="form-control"/>
+	  				<input id="searchDestinationPlaceName" placeholder="dest" type="text" class="form-control"/>
+	  				<input id="searchButton" class="btn btn-primary" type="button" value="Crawl" onclick="path();" />
 	  			</form>
 	  			
 	  			<div id="results">
