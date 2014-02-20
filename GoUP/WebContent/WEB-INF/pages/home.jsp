@@ -86,8 +86,8 @@
 	  			
 	  			<form id="findPath" onkeypress="return event.keyCode != 13;">
 	  				<h3>Find Path</h3>
-	  				<input id="searchOriginPlaceName" placeholder="origin" type="text" class="form-control"/>
-	  				<input id="searchDestinationPlaceName" placeholder="dest" type="text" class="form-control"/>
+	  				<input id="searchOriginPlaceName" placeholder="Where are you now?" type="text" class="form-control"/>
+	  				<input id="searchDestinationPlaceName" placeholder="Where are you going?" type="text" class="form-control"/>
 	  				<input id="searchButton" class="btn btn-primary" type="button" value="Crawl" onclick="path();" />
 	  			</form>
 	  			

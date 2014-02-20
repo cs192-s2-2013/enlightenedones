@@ -4,6 +4,8 @@ var directionsService = new google.maps.DirectionsService();
 var map;
 var marker;
 var markerArray =[];
+var routesMarkerArray = [];
+var routePolylinesArray = [];
 var infoWindow = new google.maps.InfoWindow({
 	maxwidth: 500
 }
@@ -20,7 +22,6 @@ var upTokiRoutePath;
 var upKatipRoutePath;
 var upPhilcRoutePath;
 var visiblePath = [0,0,0,0,0];
-var markerArray = [];
 
 var directionsDisplay;
 var directionsService = new google.maps.DirectionsService();
@@ -418,30 +419,94 @@ function initialize() {
 	
 	}
 
+function path() {
+	var origin = $("#searchOriginPlaceName").val();
+	var dest = $("#searchDestinationPlaceName").val();
+	if(origin == "" || dest == "") {
+		clearMarkers();
+		directionsDisplay.setMap();
+		$("div#results").html("");
+	}
+	else {
+		var originLat = "";
+		var originLng = "";
+		var destLat = "";
+		var destLng = "";
+		$.ajax({
+			type: "Get",
+			url: "/UPMap/findPlace",
+			data: "placeName=" +origin,
+			success: function(json){
+				place = $.parseJSON(json);
+				originLat = place[0].placeLat;
+				originLng = place[0].placeLong;
+			},
+			error: function(e){
+				alert("Error: "+ e);
+			}
+			
+		});
+		
+		$.ajax({
+			type: "Get",
+			url: "/UPMap/findPlace",
+			data: "placeName=" +dest,
+			success: function(json){
+				place = $.parseJSON(json);
+				destLat = place[0].placeLat;
+				destLng = place[0].placeLong;
+				calcRoute(originLat+","+originLng, destLat+","+destLng);
+			},
+			error: function(e){
+				alert("Error: "+ e);
+			}
+			
+		});
+	}
+}
+
 
 function calcRoute(originLatLngStr, destinationLatLngStr) {
-	 //alert(originLatLngStr+" "+destinationLatLngStr);
-	 for (var i = 0; i < markerArray.length; i++) {
-	    markerArray[i].setMap(null);
-	  }
-	  markerArray = [];
-	  
+	  clearMarkers();
 	  var request = {
 	      origin:originLatLngStr,
 	      destination:destinationLatLngStr,
-	      travelMode:google.maps.TravelMode.WALKING
+	      travelMode:google.maps.TravelMode.WALKING,
+	      provideRouteAlternatives: true
 	  };
 	  directionsService.route(request, function(response, status) {
 	    if (status == google.maps.DirectionsStatus.OK) {
+	    	/*for(var i = 0; i < response.routes.length; i++) {
+	    		var renderer = new google.maps.DirectionsRenderer();
+	    		renderer.setRouteIndex(i);
+	    		renderer.setDirections(response);
+	    	}*/
+	      //directionsDisplay.setRouteIndex(1);
+	      directionsDisplay.setMap(map);
 	      directionsDisplay.setDirections(response);
-	      showSteps(response);
+	      drawRoutesMarkers(response);
 	    }
 	  });
 	  
 }
 
-function showSteps(directionResult) {
-	  var myRoute = directionResult.routes[0].legs[0];
+function drawRoutesMarkers(directionResult) {
+	for(var i = 0; i < 1; i++) {
+		var myRoute = directionResult.routes[i].legs[0];
+		routesMarkerArray[i] = [];
+		var distance = 0.0;
+		for(var j = 0; j < myRoute.steps.length; j++) {
+			distance += myRoute.steps[j].distance.value;
+			var marker = new google.maps.Marker({
+				position: myRoute.steps[i].start_location,
+				map: map
+			});
+			attachInstructionText(marker, myRoute.steps[i].instructions);
+			routesMarkerArray[i][j] = marker;
+		}
+		$("div#results").html(distance+" m");
+	}
+	 /* var myRoute = directionResult.routes[0].legs[0];
 
 	  for (var i = 0; i < myRoute.steps.length; i++) {
 	    var marker = new google.maps.Marker({
@@ -450,7 +515,7 @@ function showSteps(directionResult) {
 	    });
 	    attachInstructionText(marker, myRoute.steps[i].instructions);
 	    markerArray[i] = marker;
-	  }
+	  }*/
 	}
 
 function attachInstructionText(marker, text) {
@@ -565,6 +630,13 @@ function clearMarkers(){
 		markerArray[i].setMap(null);
 	}
 	markerArray = [];
+	
+	for(var i = 0; i < routesMarkerArray.length; i++) {
+		for(var j = 0; j < routesMarkerArray[i].length; j++) {
+			routesMarkerArray[i][j].setMap(null);
+		}
+	}
+	routesMarkerArray = [];
 }
 
 var autoCompleteCategory = "";
@@ -714,51 +786,6 @@ function categoryOnChange(){
 	else
 		doSearchOptimized(category,placeName);
 	
-}
-
-function path() {
-	clearMarkers();
-	var origin = $("#searchOriginPlaceName").val();
-	var dest = $("#searchDestinationPlaceName").val();
-	if(origin == "" || dest == "")
-		alert("pangit");
-	else {
-		var originLat = "";
-		var originLng = "";
-		var destLat = "";
-		var destLng = "";
-		$.ajax({
-			type: "Get",
-			url: "/UPMap/findPlace",
-			data: "placeName=" +origin,
-			success: function(json){
-				place = $.parseJSON(json);
-				originLat = place[0].placeLat;
-				originLng = place[0].placeLong;
-			},
-			error: function(e){
-				alert("Error: "+ e);
-			}
-			
-		});
-		
-		$.ajax({
-			type: "Get",
-			url: "/UPMap/findPlace",
-			data: "placeName=" +dest,
-			success: function(json){
-				place = $.parseJSON(json);
-				destLat = place[0].placeLat;
-				destLng = place[0].placeLong;
-				calcRoute(originLat+","+originLng, destLat+","+destLng);
-			},
-			error: function(e){
-				alert("Error: "+ e);
-			}
-			
-		});
-		//calcRoute(originLat+","+originLng, destLat+","+destLng);
-	}
 }
 
 
