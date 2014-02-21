@@ -1,8 +1,5 @@
 package com.goup.jdbc;  
-/** 
- * 
- * @author Nagesh Chauhan 
- */  
+
   
 import java.sql.ResultSet;  
 import java.sql.SQLException;  

@@ -35,14 +35,13 @@ public class PlaceDaoImpl implements PlaceDao {
 				
 	}
 	
-	public List<Place> searchPlace(String str){
+	public Place searchPlaceByName(String placeName){
 		List<Place> placeList = new ArrayList<Place>();
-		String sql = "select * from place right join categories on place.place_category=categories.category_id where place_name like \"%" + str +"%\" or place_category like \"%" + str +"%\" or place_category in (select category_id from categories" +
-				" where category_name like \"%" + str +"%\")";
+		String sql = "select * from place right join categories on place.place_category=categories.category_id where place_name="+placeName;
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		placeList = jdbcTemplate.query(sql, new PlaceRowMapper());
 		if(placeList.size()>0)
-			return placeList;
+			return placeList.get(0);
 		else
 			return null;
 		

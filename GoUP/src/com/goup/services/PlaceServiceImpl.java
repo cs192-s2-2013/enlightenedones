@@ -18,8 +18,8 @@ public class PlaceServiceImpl implements PlaceService {
 	 }  
 	
 	@Override
-	public List<Place> searchPlaceByName(String placeName){
-		return placedao.searchPlace(placeName);
+	public Place searchPlaceByName(String placeName){
+		return placedao.searchPlaceByName(placeName);
 	}
 	
 	@Override

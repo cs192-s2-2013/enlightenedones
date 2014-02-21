@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;  
 
-import com.goup.domain.Place;  
+import com.goup.domain.MyPlace;
+import com.goup.domain.Place;
+import com.goup.services.MyPlaceService;
 import com.goup.services.PlaceService;
 
 @Controller
@@ -31,6 +33,10 @@ public class HomePageController {
 	
 	@Autowired
 	PlaceService placeService;
+	
+	@Autowired
+	MyPlaceService myPlaceService;
+	
 	String success = null; 
 	
 	@RequestMapping("/home")
@@ -44,22 +50,11 @@ public class HomePageController {
 
 	
 	
-	
-	@RequestMapping("/insertPlace")  
-	public String inserData(@ModelAttribute Place place) {  
-		if (place != null){
-			placeService.insertData(place); 
-			this.success = "Succesfully added the place, " + place.getPlaceName();
-		}
-			 
-		return "redirect:/home";  
-	}  
-	
 	@RequestMapping(value="/findPlace",method=RequestMethod.GET )
 	public @ResponseBody String getPlaceByName(@RequestParam(value = "placeName") String placeName) {  
 		
 		ObjectMapper mapper = new ObjectMapper();
-		List<Place> placelist = null;
+		Place placelist = null;
 		placelist = placeService.searchPlaceByName(placeName);
 		
 		if(placelist==null){
@@ -141,22 +136,22 @@ public class HomePageController {
 			
 		}
 		 
-	} 
+	}
 	
-	@RequestMapping(value="/getAllPlaceNames",method=RequestMethod.GET )
-	public @ResponseBody String getAllPlaceNames() {  
-		
+	@RequestMapping(value="/getMyPlaces", method=RequestMethod.GET)
+	public @ResponseBody String getMyPlaces(@RequestParam(value="userId") String userId){
 		ObjectMapper mapper = new ObjectMapper();
-		List<Place> placelist = null;
-		placelist = placeService.getAllPlaceNames();
-		
-		if(placelist==null){
-			return null;
+		List<MyPlace> myPlaceList = null;
+		myPlaceList = myPlaceService.getMyPlaces(userId);
+		if(myPlaceList==null){
+			String json="error";
+			return json;
 		}else{
-			String json= "";
+			String json="";
+			
 			try {
-				json = mapper.writeValueAsString(placelist);
-
+				json = mapper.writeValueAsString(myPlaceList);
+				
 
 			} catch (JsonGenerationException e) {
 			       e.printStackTrace();
@@ -169,4 +164,18 @@ public class HomePageController {
 			
 		}
 	}
+	
+	@RequestMapping("/insertMyPlace")  
+	public @ResponseBody void inserMyPlace(@RequestParam(value = "userId") String userId,
+			@RequestParam(value ="placeId") String placeId) {
+		MyPlace myPlace = new MyPlace();
+		myPlace.setUserId(userId);
+		myPlace.setPlaceId(Integer.parseInt(placeId));
+		System.out.println(userId);
+		if (myPlace != null){
+			myPlaceService.insertData(myPlace); 
+		}
+	}  
+	
+	
 }

@@ -2,10 +2,19 @@ package com.goup.domain;
 
 public class Place {
 	
+	private int placeId;
 	private String placeName;
 	private double placeLat;
 	private double placeLong;
 	private String placeCategory;
+	
+	public int getPlaceId(){
+		return placeId;
+	}
+	
+	public void setPlaceId(int placeId){
+		this.placeId = placeId;
+	}
 	
 	public String getPlaceName(){
 		return placeName;
