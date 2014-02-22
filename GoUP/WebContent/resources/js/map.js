@@ -425,7 +425,7 @@ function path() {
 	if(origin == "" || dest == "") {
 		clearMarkers();
 		directionsDisplay.setMap();
-		$("div#results").html("");
+		$("div#routes").html("");
 	}
 	else {
 		var originLat = "";
@@ -472,51 +472,47 @@ function calcRoute(originLatLngStr, destinationLatLngStr) {
 	      origin:originLatLngStr,
 	      destination:destinationLatLngStr,
 	      travelMode:google.maps.TravelMode.WALKING,
-	      provideRouteAlternatives: true
+	      provideRouteAlternatives:true
 	  };
 	  directionsService.route(request, function(response, status) {
 	    if (status == google.maps.DirectionsStatus.OK) {
-	    	/*for(var i = 0; i < response.routes.length; i++) {
-	    		var renderer = new google.maps.DirectionsRenderer();
-	    		renderer.setRouteIndex(i);
-	    		renderer.setDirections(response);
-	    	}*/
-	      //directionsDisplay.setRouteIndex(1);
+	    	$("div#routes").html("");
+    	 for(var i = 1; i <= response.routes.length; i++) {
+    		 
+	    	  $("div#routes").append('<div class="col-md-1"><a class="route-link" data-index='+(i-1)+'>'+i+'</a></div> ');
+	      }
+    	 $("div#routes").append("<br />");
 	      directionsDisplay.setMap(map);
 	      directionsDisplay.setDirections(response);
-	      drawRoutesMarkers(response);
+	      drawRoutesMarkers(response, 0);
 	    }
+	    
+	    $(document).ready(function() {
+    	    $(".route-link").click(function() {
+    	    	var index = $(this).data("index");
+    	    	clearMarkers();
+    	    	directionsDisplay.setRouteIndex(index);
+    	    	drawRoutesMarkers(response, index);
+    	    });
+    	});
 	  });
 	  
 }
 
-function drawRoutesMarkers(directionResult) {
-	for(var i = 0; i < 1; i++) {
-		var myRoute = directionResult.routes[i].legs[0];
-		routesMarkerArray[i] = [];
-		var distance = 0.0;
-		for(var j = 0; j < myRoute.steps.length; j++) {
-			distance += myRoute.steps[j].distance.value;
-			var marker = new google.maps.Marker({
-				position: myRoute.steps[i].start_location,
-				map: map
-			});
-			attachInstructionText(marker, myRoute.steps[i].instructions);
-			routesMarkerArray[i][j] = marker;
-		}
-		$("div#results").html(distance+" m");
-	}
-	 /* var myRoute = directionResult.routes[0].legs[0];
-
+function drawRoutesMarkers(directionResult, ind) {
+	var distance = 0.0;
+	var myRoute = directionResult.routes[ind].legs[0];
 	  for (var i = 0; i < myRoute.steps.length; i++) {
+		distance += myRoute.steps[i].distance.value;
 	    var marker = new google.maps.Marker({
 	      position: myRoute.steps[i].start_location,
 	      map: map
 	    });
 	    attachInstructionText(marker, myRoute.steps[i].instructions);
 	    markerArray[i] = marker;
-	  }*/
-	}
+	  }
+	  $("div#results").html(distance+" m <br />");
+}
 
 function attachInstructionText(marker, text) {
 	  google.maps.event.addListener(marker, 'click', function() {

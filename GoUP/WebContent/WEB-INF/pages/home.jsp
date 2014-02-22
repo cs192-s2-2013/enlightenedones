@@ -73,6 +73,8 @@
 	  					<select id="categorySelect" onchange="categoryOnChange();">
 	  						<option value="">Select a category</option>
 	  						<option value="AAS">Administration and Support</option>
+	  						<option value="CHK">College of Human Kinetics</option>
+	  						<option value="CS">College of Science</option>
 	  						<option value="CSSP">College of Social Science and Philosophy</option>
 	  						<option value="DORMS">Dormitories</option>
 	  						
@@ -92,6 +94,9 @@
 	  			</form>
 	  			
 	  			<div id="results">
+	  			
+	  			</div>
+	  			<div id="routes">
 	  			
 	  			</div>
 	  	
