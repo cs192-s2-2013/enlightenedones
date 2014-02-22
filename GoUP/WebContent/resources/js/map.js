@@ -877,27 +877,54 @@ function doSearchOptimized(category,placeName){
 			    	    
 			    	    $(".favorite-star").click(function() {
 			    	    	
-			    	    	var placeId = $(this).data("placeid");
-			    	    	if($.ajax({
-			    	    		type: "Post",
-			    	    		url: "/UPMap/insertMyPlace",
-			    	    		data: "userId="+userId+"&placeId="+placeId,
-			    	    		success: function(){
-			    	    			getMyPlaces();
+			    	    	if(!$(this).hasClass('active')){
+			    	    		var placeId = $(this).data("placeid");
+				    	    	if($.ajax({
+				    	    		type: "Post",
+				    	    		url: "/UPMap/insertMyPlace",
+				    	    		data: "userId="+userId+"&placeId="+placeId,
+				    	    		success: function(){
+				    	    			getMyPlaces();
+					    	    		
+				    	    			return true;
+				    	    		},
+				    	    		error: function(){
+				    	    			return false;
+				    	    		}
+				    	    		}
+				    	    	
+				    	    			
+				    	    	
+				    	    	)){
+				    	    		$(this).addClass('active');
 				    	    		
-			    	    			return true;
-			    	    		},
-			    	    		error: function(){
-			    	    			return false;
-			    	    		}
-			    	    		}
-			    	    	
-			    	    			
-			    	    	
-			    	    	)){
-			    	    		$(this).addClass('active');
+				    	    	}
 			    	    		
+			    	    	}else{
+			    	    		var placeId = $(this).data("placeid");
+				    	    	if($.ajax({
+				    	    		type: "Post",
+				    	    		url: "/UPMap/removeMyPlace",
+				    	    		data: "userId="+userId+"&placeId="+placeId,
+				    	    		success: function(){
+				    	    			getMyPlaces();
+					    	    		
+				    	    			return true;
+				    	    		},
+				    	    		error: function(){
+				    	    			return false;
+				    	    		}
+				    	    		}
+				    	    	
+				    	    			
+				    	    	
+				    	    	)){
+				    	    		$(this).removeClass('active');
+				    	    		
+				    	    	}
 			    	    	}
+			    	    	
+			    	    	
 			    	    	
 			    	    	
 			    	    	
@@ -1025,6 +1052,7 @@ function searchPlaceEnter() {
 
 function showJeepneyRoutes(){
 	
+		
 		if($("#jeepneyRoutes").css("display")!="none"){
 			$("#jeepneyRoutes").fadeOut(250);
 			visiblePath[4] = 1;

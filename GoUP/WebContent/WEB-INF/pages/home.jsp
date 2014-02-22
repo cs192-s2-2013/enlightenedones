@@ -21,6 +21,7 @@
     <script src="<c:url value="/resources/js/bootstrap.js" />"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry&key=AIzaSyCblPnV936VjhXRneHrOKPl_aB1hozPlFU&sensor=false">
     </script>
+    <script type="text/javascript" src="<c:url value="/resources/js/html2canvas.js" />"></script>
     <script type="text/javascript" src="<c:url value="/resources/js/map.js" />"></script>
     <script type="text/javascript" src="<c:url value="/resources/js/jquery.cookie.js" />"></script>
     <script type="text/javascript" src="<c:url value="/resources/js/underscore-min.js" />"></script>
@@ -93,8 +94,24 @@
     				    }); 
     				
     				$('#findPlace').click(function(){
-    					$("#searchPlaceName").focus().tap();
+    					$("#searchPlaceName").focus();
+    					
+    					
     				});
+    				
+    				
+    				$('#screenshot').click(function(){
+    					html2canvas($('#map-canvas'), {
+  						  proxy: "proxy.js",
+  						  useCORS: true,
+  						  logging: true, 
+  						  onrendered: function(canvas) {
+  							img = canvas.toDataURL("image/png");
+  					       	window.open(img);
+  						  }
+  						});
+    				});
+    				
     				showOrHideFeature();
     			    			});
     	
@@ -135,7 +152,7 @@
 	  		<div class="icon-title"><a><span class="menu-icon icon-directions"></span>Get Directions</a></div>
 	  		<div class="icon-title"><a onclick="showJeepneyRoutes();"><span class="menu-icon icon-jeepney"></span>Jeepney Routes</a></div>
 	  		<br />
-	  		<div class="icon-title"><a><span class="menu-icon icon-help"></span>Help</a></div>
+	  		<div class="icon-title"><a id="screenshot"><span class="menu-icon icon-help"></span>Help</a></div>
 	  	
 	  	</div>
 	  					
@@ -191,6 +208,14 @@
 							,in the campus,from one location to another including
 							info about travel time and modes of
 							transportation.</div>
+	  					</div>
+	  				</section>
+	  				
+	  				<section id="four" class="feature-panel" data-type="background" data-speed="10">
+	  					<div class="feature-text">
+		  					<div class="feature-title">Save Your Favorite Places</div>
+		  					<div class="feature-tagline">GoUP lets its users to save their favorite places
+		  					using the yellow stars, making it easier to locate these places.</div>
 	  					</div>
 	  				</section>
 	  			</div>

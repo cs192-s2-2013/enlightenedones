@@ -344,7 +344,7 @@ input[placeholder], [placeholder], *[placeholder] {
 	padding: 5px;
 }
 
-#one.feature-panel{
+#one.feature-panel, #one > .feature-text{
 	background: #f8f8f8 0 0 repeat fixed;
 	
 }
@@ -355,6 +355,7 @@ input[placeholder], [placeholder], *[placeholder] {
 	bottom: 120px;
 	text-align: center;
 	width: 100%;
+	color: #a7a7a7;
 }
 
 #one > .arrow {
@@ -372,17 +373,22 @@ input[placeholder], [placeholder], *[placeholder] {
 #two.feature-panel{
 	background: url(../img/feature-bg2.png) 0 0 no-repeat fixed;
 	background-size: contain;
-	background-color: #f8f8f8;
+	background-color: #a5f999;
 
 }
 
 #three.feature-panel{
 	background: url(../img/feature-bg3.png) 0 0 no-repeat fixed;
 	background-size: contain;
-	background-color: #f8f8f8;
+	background-color: #fff799;
 
 }
 
+#four.feature-panel{
+	background-size: contain;
+	background-color: #99bafd;
+
+}
 
 
 .welcome-panel,.feature-panel{

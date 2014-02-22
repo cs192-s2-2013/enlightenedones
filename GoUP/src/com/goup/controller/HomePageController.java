@@ -166,16 +166,25 @@ public class HomePageController {
 	}
 	
 	@RequestMapping("/insertMyPlace")  
-	public @ResponseBody void inserMyPlace(@RequestParam(value = "userId") String userId,
+	public @ResponseBody void insertMyPlace(@RequestParam(value = "userId") String userId,
 			@RequestParam(value ="placeId") String placeId) {
 		MyPlace myPlace = new MyPlace();
 		myPlace.setUserId(userId);
 		myPlace.setPlaceId(Integer.parseInt(placeId));
-		System.out.println(userId);
 		if (myPlace != null){
 			myPlaceService.insertData(myPlace); 
 		}
 	}  
 	
+	@RequestMapping("/removeMyPlace")  
+	public @ResponseBody void removeMyPlace(@RequestParam(value = "userId") String userId,
+			@RequestParam(value ="placeId") String placeId) {
+		MyPlace myPlace = new MyPlace();
+		myPlace.setUserId(userId);
+		myPlace.setPlaceId(Integer.parseInt(placeId));
+		if (myPlace != null){
+			myPlaceService.deleteData(myPlace); 
+		}
+	}  
 	
 }
