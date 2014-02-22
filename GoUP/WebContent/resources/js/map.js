@@ -1052,11 +1052,11 @@ $(document).ready(function(){
 			function(){
 				var target = "div"+$(this).attr("href");
 				if($(target).hasClass("hidden")){
-					$(target).removeClass("hidden");					
-					$(target).html("List buildings here");
+					$(target).removeClass("hidden");
+					//$(target).html("List buildings here");
 				}else{
 					$(target).addClass("hidden");
-					$(target).html("");
+					//$(target).html("");
 				}
 				
 				return false;
