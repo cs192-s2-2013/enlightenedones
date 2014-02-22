@@ -1,18 +1,17 @@
-var directionsDisplay;
-var directionsService = new google.maps.DirectionsService();
-
+var userId = "1234";
+var myPlacesToggle = false;
+var myPlacesList = [];
 var map;
 var marker;
 var markerArray =[];
 var routesMarkerArray = [];
 var routePolylinesArray = [];
+var markerArray = [];
 var infoWindow = new google.maps.InfoWindow({
 	maxwidth: 500
 }
 );
 var zoomFluid;
-
-
 var lineSymbol = {
 	    path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
 	  };
@@ -23,8 +22,12 @@ var upKatipRoutePath;
 var upPhilcRoutePath;
 var visiblePath = [0,0,0,0,0];
 
+var routeMarkerArray = [];
+
 var directionsDisplay;
 var directionsService = new google.maps.DirectionsService();
+
+var display = 0;
 
 var upMapBoundaryCoordinates = [
   	                           	new google.maps.LatLng(14.662367,121.044873),
@@ -317,10 +320,6 @@ var upPhilcRouteCoordinates = [
 								new google.maps.LatLng(14.657525,121.072742)
                              
                              ];
-//var testing = "}cmxAcc~aVO?C?C@k@l@";
-//var testingarray = google.maps.geometry.encoding.decodePath(testing);
-
-
 
 function initialize() {
 	directionsDisplay = new google.maps.DirectionsRenderer();
@@ -467,7 +466,15 @@ function path() {
 
 
 function calcRoute(originLatLngStr, destinationLatLngStr) {
+
 	  clearMarkers();
+
+	 for (var i = 0; i < routeMarkerArray.length; i++) {
+	    routeMarkerArray[i].setMap(null);
+	  }
+	 routeMarkerArray = [];
+	  
+
 	  var request = {
 	      origin:originLatLngStr,
 	      destination:destinationLatLngStr,
@@ -496,6 +503,7 @@ function calcRoute(originLatLngStr, destinationLatLngStr) {
     	    });
     	});
 	  });
+	 
 	  
 }
 
@@ -509,7 +517,7 @@ function drawRoutesMarkers(directionResult, ind) {
 	      map: map
 	    });
 	    attachInstructionText(marker, myRoute.steps[i].instructions);
-	    markerArray[i] = marker;
+	    routeMarkerArray[i] = marker;
 	  }
 	  $("div#results").html(distance+" m <br />");
 }
@@ -606,12 +614,13 @@ function allRoute (){
 	
 }
 
-function panToLatLng(placeLat,placeLong){
+function panToLatLng(placeName,placeLat,placeLong){
 	var myLatLng = new google.maps.LatLng(placeLat,placeLong);
 
 	
 	zoomFluid = map.getZoom();
 	map.panTo(myLatLng);
+	
 	if(zoomFluid<=17)
 		zoomTo();
 	else
@@ -669,6 +678,159 @@ function getAllPlaceNames(){
 	});
 }
 
+
+
+function containsObject(obj,array){
+	
+	for(var i=0;i<array.length;i++){
+		if(_.isEqual(array[i],obj))
+			return true;
+	}
+	return false;
+}
+
+function getMyPlaces(){
+	
+	$.ajax({
+		type: "Get",
+		url: "/UPMap/getMyPlaces",
+		data: "userId="+userId,
+		success: function(json){
+			myPlacesList = $.parseJSON(json);
+			updateMyPlaces();
+			
+		},
+		error: function(e){
+			return null;
+		}
+	});
+	
+
+	
+	
+}
+
+function updateMyPlaces(){
+	
+	
+	
+	$("div#favorites").html("");
+	if(myPlacesList!=""){
+		for(var i=0;i<myPlacesList.length;i++){
+			$("div#favorites").append('<div class="results-item"><a>'+myPlacesList[i].placeName+'</a></div>');
+			
+		}
+		
+	}else{
+		
+		$("div#favorites").append("<p>No saved places yet.</p>");
+	}
+
+}
+
+function showOrHideTarget(target){
+	if($(target).css("display")!="none"){
+		$(target).fadeOut(250);
+		display = display -1;
+		showOrHideFeature();
+	}else{
+		$(target).fadeIn(250);
+		display = display + 1;
+		showOrHideFeature();
+	}
+}
+
+
+function viewMyPlaces(){
+	
+	getMyPlaces();
+	updateMyPlaces();
+	updateRecentlySearched();
+	showOrHideTarget($("#myPlaces"));
+		
+	
+}
+
+function updateRecentlySearched(){
+	
+	$("div#recent").html("");
+	
+	var searchedList = $.cookie("recentlySearched");
+	
+	if(searchedList){
+		searchedList = $.parseJSON(searchedList);
+		
+		if(searchedList.length == 0){
+			
+			$("div#recent").append("No recently searched items.");
+		}else{
+			
+			for(var i=0; i<searchedList.length;i++){
+			 
+				$("div#recent").append('<div class="recent-place"><a class="recent-place-link" data-placename="'+ searchedList[i].placeName+ '">'+searchedList[i].placeName+'</a><i class="delete-mark fa fa-times"></i></div>');
+				
+				$(".recent-place-link").click(function(){
+					var category ="";
+					var placeName = $(this).data("placename");
+					doSearchOptimized(category,placeName);
+				});
+				
+				$(".recent-place").hover(function(){
+					$(this).find(".delete-mark").css("visibility","visible");
+					$(this).find(".recent-place-link").addClass("recent-place-focus");
+				},function(){
+					$(this).find(".delete-mark").css("visibility","hidden");
+					$(this).find(".recent-place-link").removeClass("recent-place-focus");
+				});
+			}
+			
+			
+		}
+		
+		
+		
+	}else{
+		$("div#recent").append("No recently searched items.");
+	}
+	
+	
+	
+}
+
+function addRecentlySearchedPlace(object){
+	
+	
+	var searchedList = $.cookie("recentlySearched");
+	var objectJSON;
+	
+	if(!searchedList){
+		searchedList = [];
+		searchedList.unshift(object);
+		objectJSON = JSON.stringify(searchedList);
+		$.cookie("recentlySearched",objectJSON,{path: '/', expires:7});
+		updateRecentlySearched();
+		
+	}else{
+		searchedList = $.parseJSON(searchedList);
+		
+		if(!containsObject(object,searchedList)){
+			
+			if(searchedList.length<5){
+				searchedList.unshift(object);
+			}else{
+				searchedList.pop();
+				searchedList.unshift(object);
+			}
+			
+			objectJSON = JSON.stringify(searchedList);
+			$.cookie("recentlySearched",objectJSON,{path: '/', expires:7});
+			updateRecentlySearched();
+		}
+	}
+	
+	
+}
+
 function doSearchOptimized(category,placeName){
 	
 	
@@ -681,24 +843,54 @@ function doSearchOptimized(category,placeName){
 		url: "/UPMap/findPlaceByCategoryAndName",
 		data: "category=" + category +"&placeName=" +placeName,
 		success: function(json){
-			$("div#results").html("");
-			if(json){
 			
+			$("div#results").html("");
+			$("div#results").removeClass("hidden");
+			display = display + 1;
+			showOrHideFeature();
+			if(json){
+				
+				var searchString;
+				
 				
 				var place = $.parseJSON(json);
 				if(place) {
-					if(place.length>1)
-						$("div#results").append('<p>'+ place.length +' results found.</p>');
+					if(placeName!="")
+						searchString = placeName;
 					else
-						$("div#results").append('<p>'+ place.length +' result found.</p>');
+						searchString = place[0].placeCategory;
+						
+					if(place.length>1)
+						$("div#results").append('<p><b style="font-size:20px">'+ searchString+'</b><br />'+ place.length +' results found.</p>');
+					else
+						$("div#results").append('<p><b style="font-size:20px">'+ searchString+'</b><br />'+ place.length +' result found.</p>');
 					
 					
 					for(var i = 0; i < place.length; i++) {
 						count=i+1;
-						$("div#results").append('<div class="col-md-1"><a class="map-marker">'+count+'</a></div>');
-						$("div#results").append('<div class="col-md-11 results-item"><a class="place-link" data-placename="'+place[i].placeName +'" data-latitude="' +place[i].placeLat + '" data-longitude="'+place[i].placeLong +'">' + place[i].placeName + '</a><br />'
-								+ '<p class="small-note">Category: <a>'+ place[i].placeCategory +'</a></p></div>');
+						var string = "";
+						string = string + '<div class="results-item">';
+						string = string + '<div class="marker-label"><a class="map-marker">'+count+'</a></div>';
+						string = string + '<div class="results-details"><a class="place-link" data-placename="'+place[i].placeName +'" data-latitude="' +place[i].placeLat + '" data-longitude="'+place[i].placeLong +'">' + place[i].placeName + '</a><br />';
+						string = string + '<p class="small-note">Category: <a class="category-link">'+ place[i].placeCategory +'</a></p></div>';
 						
+						var myPlaceObj = new Object({
+							userId: userId,
+							placeId: place[i].placeId,
+							placeName: place[i].placeName
+						});
+						var starclass = '';
+						if(containsObject(myPlaceObj,myPlacesList)){
+							starclass = 'favorite-star fa fa-star active';
+						}else{
+							starclass = 'favorite-star fa fa-star';
+						}
+						
+						string = string + '<div class="favorite-star-wrapper"><a class="'+ starclass +'" data-placeid="'+place[i].placeId +'"></a></div>';
+						string = string + '</div>';
+						
+						
+						$("div#results").append(string);
 						var markerPosition = new google.maps.LatLng(place[i].placeLat,place[i].placeLong);
 						var newMarker = new google.maps.Marker({
 						    position: markerPosition,
@@ -733,6 +925,9 @@ function doSearchOptimized(category,placeName){
 								zoomTo();
 							else
 								zoomOut();
+							
+							
+							
 				
 						});
 						
@@ -741,13 +936,100 @@ function doSearchOptimized(category,placeName){
 			    	    $(".place-link").click(function() {
 			    	    	var placeLat = $(this).data("latitude");
 			    	    	var placeLong = $(this).data("longitude");
-			    	    	panToLatLng(placeLat,placeLong);
+			    	    	var placeName = $(this).data("placename");
+			    	    	panToLatLng(placeName,placeLat,placeLong);
+			    	    	
+			    	    	
+			    	    	var object = new Object();
+			    	    	
+			    	    	object={	placeName: placeName,
+			    	    				placeLat: placeLat,
+			    	    				placeLong: placeLong  };
+			    	    	
+			    	    	addRecentlySearchedPlace(object);
+			    	    		
+			    	    	
+			    	    	
+			    	    	
+			    	    	
 			    	    });
+			    	    
+			    	    $(".favorite-star").click(function() {
+			    	    	
+			    	    	if(!$(this).hasClass('active')){
+			    	    		var placeId = $(this).data("placeid");
+				    	    	if($.ajax({
+				    	    		type: "Post",
+				    	    		url: "/UPMap/insertMyPlace",
+				    	    		data: "userId="+userId+"&placeId="+placeId,
+				    	    		success: function(){
+				    	    			getMyPlaces();
+					    	    		
+				    	    			return true;
+				    	    		},
+				    	    		error: function(){
+				    	    			return false;
+				    	    		}
+				    	    		}
+				    	    	
+				    	    			
+				    	    	
+				    	    	)){
+				    	    		$(this).addClass('active');
+				    	    		
+				    	    	}
+			    	    		
+			    	    	}else{
+			    	    		var placeId = $(this).data("placeid");
+				    	    	if($.ajax({
+				    	    		type: "Post",
+				    	    		url: "/UPMap/removeMyPlace",
+				    	    		data: "userId="+userId+"&placeId="+placeId,
+				    	    		success: function(){
+				    	    			getMyPlaces();
+					    	    		
+				    	    			return true;
+				    	    		},
+				    	    		error: function(){
+				    	    			return false;
+				    	    		}
+				    	    		}
+				    	    	
+				    	    			
+				    	    	
+				    	    	)){
+				    	    		$(this).removeClass('active');
+				    	    		
+				    	    	}
+			    	    	}
+			    	    	
+			    	    	
+			    	    	
+			    	    	
+			    	    	
+			    	    	
+			    	    	
+			    	    	
+			    	    });
+			    	    
+			    
+			    	    
+			    	    
+			    	    $(".category-link").click(function() {
+			    	    	var category = "";
+			    	    	var placeName = $(this).text();
+			    	    	
+			    	    	
+			    	    	doSearchOptimized(category,placeName);
+			    	    	
+			    	    	
+			    	    });
+			    
 			    	});
 				}
 			
 			}else{
-				document.getElementById('results').innerHTML="Sorry, no results found.";
+				document.getElementById('results').innerHTML="<p>Sorry, no results found.</p>";
 				return false;
 			}
 			
@@ -764,6 +1046,14 @@ function doSearchOptimized(category,placeName){
 	
 }
 
+function showOrHideFeature(){
+	if(display==0){
+		$("#welcome").fadeIn(250);
+	}else{
+		$("#welcome").fadeOut(250);
+	}
+}	
+
 function categoryOnChange(){
 	
 	var category = $( "#categorySelect option:selected" ).val();
@@ -777,6 +1067,9 @@ function categoryOnChange(){
 		
 		clearMarkers();
 		$("div#results").html("");
+		$("div#results").addClass("hidden");
+		display=display-1;
+		showOrHideFeature();
 	}
 		
 	else
@@ -834,7 +1127,50 @@ function searchPlaceEnter() {
 }
 
 
+function showJeepneyRoutes(){
+	
+		
+		if($("#jeepneyRoutes").css("display")!="none"){
+			$("#jeepneyRoutes").fadeOut(250);
+			visiblePath[4] = 1;
+			allRoute();
+			display = display - 1;
+			showOrHideFeature();
+		}else{
+			$("#jeepneyRoutes").fadeIn(250);
+			display = display + 1;
+			showOrHideFeature();
+		}
+		
+	
+}
 
+
+$(document).ready(function(){
+	//calcRoute("14.6542240000,121.0734100000", "14.6598450000,121.0709850000");
+	getAllPlaceNames();
+	getMyPlaces();
+	updateMyPlaces();
+	updateRecentlySearched();
+	
+	$('.jeepney-places-button').click(
+			function(){
+				var target = "div"+$(this).attr("href");
+				if($(target).hasClass("hidden")){
+					$(target).removeClass("hidden");
+					//$(target).html("List buildings here");
+				}else{
+					$(target).addClass("hidden");
+					//$(target).html("");
+				}
+				
+				return false;
+			}
+			
+			
+	);
+	
+});
 
 
 $(document).keyup(function(e){
@@ -855,6 +1191,7 @@ $(document).keyup(function(e){
 		   }else if(e.keyCode==8){
 			   clearMarkers();
 			   $("div#results").html("");
+			   $("div#results").addClass("hidden");
 		   }
 		   
 		   
@@ -864,12 +1201,10 @@ $(document).keyup(function(e){
 	   }else if (category==""&&placeName==""){
 		   clearMarkers();
 		   $("div#results").html("");
+		   $("div#results").addClass("hidden");
 	   }
 	   
    }
    
 });
 
-$(document).ready(function(){
-	getAllPlaceNames();
-});

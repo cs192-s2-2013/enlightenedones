@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 15, 2014 at 02:09 AM
+-- Generation Time: Feb 21, 2014 at 05:54 PM
 -- Server version: 5.5.32
 -- PHP Version: 5.4.16
 
@@ -43,6 +43,25 @@ INSERT INTO `categories` (`category_id`, `category_name`) VALUES
 ('CSSP', 'College of Social Sciences and Philosophy'),
 ('DORMS', 'Dormitories'),
 ('NONE', 'None');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `myplace`
+--
+
+CREATE TABLE IF NOT EXISTS `myplace` (
+  `user_id` varchar(11) NOT NULL,
+  `place_id` int(11) NOT NULL,
+  PRIMARY KEY (`user_id`,`place_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `myplace`
+--
+
+INSERT INTO `myplace` (`user_id`, `place_id`) VALUES
+('1234', 23);
 
 -- --------------------------------------------------------
 

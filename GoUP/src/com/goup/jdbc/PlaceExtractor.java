@@ -1,8 +1,5 @@
 package com.goup.jdbc;  
-/** 
- * 
- * @author Nagesh Chauhan 
- */  
+
   
   
 import java.sql.ResultSet;  
@@ -17,7 +14,8 @@ public class PlaceExtractor implements ResultSetExtractor<Place> {
    DataAccessException {  
     
   Place place = new Place();  
-    
+  
+  place.setPlaceId(resultSet.getInt(1));
   place.setPlaceName(resultSet.getString(2));
   place.setPlaceLat(resultSet.getDouble(5));  
   place.setPlaceLong(resultSet.getDouble(6));  
