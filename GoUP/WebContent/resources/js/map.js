@@ -28,6 +28,7 @@ var directionsDisplay;
 var directionsService = new google.maps.DirectionsService();
 
 var display = 0;
+var resultsToggle = 0;
 
 var upMapBoundaryCoordinates = [
   	                           	new google.maps.LatLng(14.662367,121.044873),
@@ -508,18 +509,20 @@ function calcRoute(originLatLngStr, destinationLatLngStr) {
 }
 
 function drawRoutesMarkers(directionResult, ind) {
+	
 	var distance = 0.0;
 	var myRoute = directionResult.routes[ind].legs[0];
 	  for (var i = 0; i < myRoute.steps.length; i++) {
 		distance += myRoute.steps[i].distance.value;
-	    var marker = new google.maps.Marker({
+	    var newMarker = new google.maps.Marker({
 	      position: myRoute.steps[i].start_location,
 	      map: map
 	    });
-	    attachInstructionText(marker, myRoute.steps[i].instructions);
-	    routeMarkerArray[i] = marker;
+	    attachInstructionText(newMarker, myRoute.steps[i].instructions);
+	    routesMarkerArray[i] = newMarker;
+	    newMarker = null;
 	  }
-	  $("div#results").html(distance+" m <br />");
+	  //$("div#routes").append(distance+" m <br />");
 }
 
 function attachInstructionText(marker, text) {
@@ -676,6 +679,10 @@ function getAllPlaceNames(){
 	$( "#searchPlaceName" ).autocomplete({
 		source: availablePlaceNames
 	});
+	
+	$( ".search-input" ).autocomplete({
+		source: availablePlaceNames
+	});
 }
 
 
@@ -747,6 +754,14 @@ function viewMyPlaces(){
 	updateMyPlaces();
 	updateRecentlySearched();
 	showOrHideTarget($("#myPlaces"));
+		
+	
+}
+
+function viewGetDirections(){
+	
+	
+	showOrHideTarget($("#getDirections"));
 		
 	
 }
@@ -837,7 +852,7 @@ function doSearchOptimized(category,placeName){
 	clearMarkers();
 	
 	setInitPanAndZoom();
-	
+
 	$.ajax({
 		type: "Get",
 		url: "/UPMap/findPlaceByCategoryAndName",
@@ -846,7 +861,12 @@ function doSearchOptimized(category,placeName){
 			
 			$("div#results").html("");
 			$("div#results").removeClass("hidden");
-			display = display + 1;
+			if(resultsToggle==0){
+				display = display + 1;
+				resultsToggle=1;
+			}
+				
+			
 			showOrHideFeature();
 			if(json){
 				
@@ -1069,6 +1089,7 @@ function categoryOnChange(){
 		$("div#results").html("");
 		$("div#results").addClass("hidden");
 		display=display-1;
+		resultsToggle = 0;
 		showOrHideFeature();
 	}
 		
@@ -1135,6 +1156,7 @@ function showJeepneyRoutes(){
 			visiblePath[4] = 1;
 			allRoute();
 			display = display - 1;
+			resultsToggle = 0;
 			showOrHideFeature();
 		}else{
 			$("#jeepneyRoutes").fadeIn(250);
@@ -1192,6 +1214,8 @@ $(document).keyup(function(e){
 			   clearMarkers();
 			   $("div#results").html("");
 			   $("div#results").addClass("hidden");
+			   display = display - 1;
+			   resultsToggle = 0;
 		   }
 		   
 		   
@@ -1202,6 +1226,8 @@ $(document).keyup(function(e){
 		   clearMarkers();
 		   $("div#results").html("");
 		   $("div#results").addClass("hidden");
+		   display = display - 1;
+		   resultsToggle = 0;
 	   }
 	   
    }

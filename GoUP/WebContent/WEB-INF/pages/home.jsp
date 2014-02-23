@@ -10,7 +10,7 @@
     <link href="<c:url value="/resources/css/bootstrap.css" />" rel="stylesheet"/>
     <link href="<c:url value="/resources/css/font-awesome.css" />" rel="stylesheet"/>
     <link href="<c:url value="/resources/css/global.css" />" rel="stylesheet"/>
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+ 
     <!--End Including Stylesheets-->
     
     <!-- Include JS Plugins -->
@@ -113,6 +113,7 @@
     				});
     				
     				showOrHideFeature();
+    				$('ul.ui-autocomplete').removeAttr('style');
     			    			});
     	
     		
@@ -151,7 +152,7 @@
 	  	
 	  	<div id="menu">
 	  		<div class="icon-title"><a onclick="viewMyPlaces();"><span class="menu-icon icon-myplaces"></span>My Places</a></div>
-	  		<div class="icon-title"><a><span class="menu-icon icon-directions"></span>Get Directions</a></div>
+	  		<div class="icon-title"><a onclick="viewGetDirections();"><span class="menu-icon icon-directions"></span>Get Directions</a></div>
 	  		<div class="icon-title"><a onclick="showJeepneyRoutes();"><span class="menu-icon icon-jeepney"></span>Jeepney Routes</a></div>
 	  		<br />
 	  		<div class="icon-title"><a id="screenshot"><span class="menu-icon icon-help"></span>Help</a></div>
@@ -226,18 +227,21 @@
 	  				</section>
 	  			</div>
 	  			
-
-	  			<form id="findPath" onkeypress="return event.keyCode != 13;">
-	  				<h3>Find Path</h3>
-	  				<input id="searchOriginPlaceName" placeholder="Where are you now?" type="text" class="form-control"/>
-	  				<input id="searchDestinationPlaceName" placeholder="Where are you going?" type="text" class="form-control"/>
-	  				<input id="searchPathButton" class="btn btn-primary" type="button" value="Crawl" onclick="path();" />
-	  			</form>
+				<div id = "getDirections" style="display:none;">
+		  			<form id="findPath" onkeypress="return event.keyCode != 13;">
+		  				<b style="font-size:20px;">Get Directions</b>
+		  				<input id="searchOriginPlaceName" class="search-input" placeholder="Where are you now?" type="text" />
+		  				<input id="searchDestinationPlaceName" class="search-input" placeholder="Where are you going?" type="text"/>
+		  				<input id="searchPathButton" class="btn btn-primary" type="button" value="Get Directions" onclick="path();" />
+		  			</form>
+		  			
+		  			<div id="routes">
 	  			
-	  			
-	  			<div id="routes">
-	  			
+	  				</div>
+		  			
 	  			</div>
+	  			
+	  			
 	  	
 
 	  			<div id="results" class="hidden">

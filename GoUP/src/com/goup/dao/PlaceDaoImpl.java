@@ -37,7 +37,7 @@ public class PlaceDaoImpl implements PlaceDao {
 	
 	public List<Place> searchPlaceByName(String placeName){
 		List<Place> placeList = new ArrayList<Place>();
-		String sql = "select * from place right join categories on place.place_category=categories.category_id where place_name=\""+placeName+"\"";
+		String sql = "select * from place right join categories on place.place_category=categories.category_id where place_name like \"%"+placeName+"%\"";
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		placeList = jdbcTemplate.query(sql, new PlaceRowMapper());
 		if(placeList.size()>0)
