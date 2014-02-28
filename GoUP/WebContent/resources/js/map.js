@@ -1073,7 +1073,7 @@ function doSearchOptimized(category,placeName){
 						var string = "";
 						string = string + '<div class="results-item">';
 						string = string + '<div class="marker-label"><a class="map-marker">'+letter+'</a></div>';
-						string = string + '<div class="results-details"><a class="place-link" data-placename="'+place[i].placeName +'" data-latitude="' +place[i].placeLat + '" data-longitude="'+place[i].placeLong +'">' + place[i].placeName + '</a><br />';
+						string = string + '<div class="results-details"><a class="place-link" data-index="'+ i + '" data-placename="'+place[i].placeName +'" data-latitude="' +place[i].placeLat + '" data-longitude="'+place[i].placeLong +'">' + place[i].placeName + '</a><br />';
 						string = string + '<p class="small-note">Category: <a class="category-link">'+ place[i].placeCategory +'</a></p></div>';
 						
 						var myPlaceObj = new Object({
@@ -1135,9 +1135,9 @@ function doSearchOptimized(category,placeName){
 			    	    	var placeLat = $(this).data("latitude");
 			    	    	var placeLong = $(this).data("longitude");
 			    	    	var placeName = $(this).data("placename");
-			    	    	panToLatLng(placeName,placeLat,placeLong);
-			    	    	
-			    	    	
+			    	   		var index = $(this).data("index");
+			    	    	new google.maps.event.trigger( markerArray[index], 'click' );
+							
 			    	    	var object = new Object();
 			    	    	
 			    	    	object={	placeName: placeName,
