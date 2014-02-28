@@ -28,6 +28,8 @@
 	<bean id="placeService" class="com.goup.services.PlaceServiceImpl" />
 	<bean id="myPlaceDao" class="com.goup.dao.MyPlaceDaoImpl" />
 	<bean id="myPlaceService" class="com.goup.services.MyPlaceServiceImpl" />
+	<bean id="categoryDao" class="com.goup.dao.CategoryDaoImpl" />
+	<bean id="categoryService" class="com.goup.services.CategoryServiceImpl" />
 
 	<!-- declare datasource bean -->
 	<bean id="dataSource"

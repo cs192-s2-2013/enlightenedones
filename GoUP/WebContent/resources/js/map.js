@@ -887,10 +887,11 @@ function doSearchOptimized(category,placeName){
 					
 					
 					for(var i = 0; i < place.length; i++) {
-						count=i+1;
+						
+						var letter= String.fromCharCode('A'.charCodeAt() + i);
 						var string = "";
 						string = string + '<div class="results-item">';
-						string = string + '<div class="marker-label"><a class="map-marker">'+count+'</a></div>';
+						string = string + '<div class="marker-label"><a class="map-marker">'+letter+'</a></div>';
 						string = string + '<div class="results-details"><a class="place-link" data-placename="'+place[i].placeName +'" data-latitude="' +place[i].placeLat + '" data-longitude="'+place[i].placeLong +'">' + place[i].placeName + '</a><br />';
 						string = string + '<p class="small-note">Category: <a class="category-link">'+ place[i].placeCategory +'</a></p></div>';
 						
@@ -920,7 +921,7 @@ function doSearchOptimized(category,placeName){
 						});
 						
 						var markerIcon = new google.maps.MarkerImage(
-							    'resources/img/marker'+count+'.png',
+							    'resources/img/marker'+letter+'.png',
 							    null, /* size is determined at runtime */
 							    null, /* origin is 0,0 */
 							    null, /* anchor is bottom center of the scaled image */
@@ -1125,6 +1126,26 @@ Function: initializes the map on window load
 ------------------------------------------------------*/
 google.maps.event.addDomListener(window, 'load', initialize);
 
+function getCategories(){
+	
+	$.ajax({
+		type: "Get",
+		url: "/UPMap/getCategories",
+		success: function(json){
+			categoryList = $.parseJSON(json);
+			$("select#categorySelect").append('<option value="">Select a category</option>');
+			for(var i=0; i<categoryList.length ; i++){
+			
+				$("select#categorySelect").append('<option value="' + categoryList[i].categoryId+'">'+categoryList[i].categoryName +'</option>');
+			}
+			
+		},
+		error: function(e){
+			return null;
+		}
+	});
+}
+
 function searchPlaceClick(){
 	
 	var category = $( "#categorySelect option:selected" ).val();
@@ -1169,7 +1190,8 @@ function showJeepneyRoutes(){
 
 
 $(document).ready(function(){
-	//calcRoute("14.6542240000,121.0734100000", "14.6598450000,121.0709850000");
+
+	getCategories();
 	getAllPlaceNames();
 	getMyPlaces();
 	updateMyPlaces();

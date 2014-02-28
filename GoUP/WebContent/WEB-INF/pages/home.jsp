@@ -106,10 +106,14 @@
   						  useCORS: true,
   						  logging: true, 
   						  onrendered: function(canvas) {
-  							img = canvas.toDataURL("image/png");
-  					       	window.open(img);
+  							var img = canvas.toDataURL();
+  							var w;
+  							w.location = img;
+  							
+  							
   						  }
   						});
+    					
     				});
     				
     				showOrHideFeature();
@@ -134,13 +138,7 @@
 			<div class="styled-select">
 			
 				<select id="categorySelect" onchange="categoryOnChange();">
-	  				<option value="">Select a category</option>
-	  				<option value="AAS">Administration and Support</option>
-	  				<option value="CHK">College of Human Kinetics</option>
-	  				<option value="CS">College of Science</option>
-	  				<option value="CSSP">College of Social Science and Philosophy</option>
-	  				<option value="DORMS">Dormitories</option>
-	  						
+	  				
 	  			</select>
 			
 			</div>
@@ -155,7 +153,8 @@
 	  		<div class="icon-title"><a onclick="viewGetDirections();"><span class="menu-icon icon-directions"></span>Get Directions</a></div>
 	  		<div class="icon-title"><a onclick="showJeepneyRoutes();"><span class="menu-icon icon-jeepney"></span>Jeepney Routes</a></div>
 	  		<br />
-	  		<div class="icon-title"><a id="screenshot"><span class="menu-icon icon-help"></span>Help</a></div>
+	  		<div class="icon-title"><a id="screenshot"><span class="menu-icon icon-screenshot"></span>Screenshot</a></div>
+	  		<div class="icon-title"><a><span class="menu-icon icon-help"></span>Help</a></div>
 	  	
 	  	</div>
 	  					

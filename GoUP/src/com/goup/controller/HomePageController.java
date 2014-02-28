@@ -25,6 +25,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.goup.domain.MyPlace;
 import com.goup.domain.Place;
+import com.goup.domain.Category;
+import com.goup.services.CategoryService;
 import com.goup.services.MyPlaceService;
 import com.goup.services.PlaceService;
 
@@ -37,17 +39,47 @@ public class HomePageController {
 	@Autowired
 	MyPlaceService myPlaceService;
 	
+	@Autowired
+	CategoryService categoryService;
+	
 	String success = null; 
 	
 	@RequestMapping("/home")
 	public ModelAndView home(@ModelAttribute Place place){
 		ModelAndView modelAndView = new ModelAndView();
+			
 		modelAndView.addObject("message",success);
 		modelAndView.setViewName("home");
 		this.success=null;
 		return modelAndView;
 	}
 
+	@RequestMapping("/getCategories")
+	public @ResponseBody String getCategories(){
+		
+		ObjectMapper mapper = new ObjectMapper();
+		List<Category> categoryList = null;
+		categoryList = categoryService.getCategories(); 
+		
+		if(categoryList==null){
+			return null;
+		}else{
+			String json= "";
+			try {
+				
+				json = mapper.writeValueAsString(categoryList);
+			} catch (JsonGenerationException e) {
+			       e.printStackTrace();
+		    } catch (JsonMappingException e) {
+		       e.printStackTrace();
+		    } catch (IOException e) {
+		       e.printStackTrace();
+		    }
+			return json;
+			
+			
+		}
+	}
 	
 	
 	@RequestMapping(value="/findPlace",method=RequestMethod.GET )

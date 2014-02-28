@@ -176,7 +176,7 @@ input.form-control {
 	border-radius: 0px;
 	height:30px;
 	border-width: 0px;
-	padding: 0px 5px;
+	padding: 0px 8px;
 }
 
 #searchButton {	
@@ -223,6 +223,8 @@ input[placeholder], [placeholder], *[placeholder] {
 
 .icon-title {
 	height: 30px;
+	width: 140px;
+	font-size: 14px;
 	margin-top: 3px;
 	vertical-align: middle;
 	display:inline-block;
@@ -337,6 +339,11 @@ input[placeholder], [placeholder], *[placeholder] {
 
 .icon-help {
 	background-image: url(../img/icon-help.png);
+		
+}
+
+.icon-screenshot {
+	background-image: url(../img/icon-screenshot.png);
 		
 }
 
@@ -1346,4 +1353,8 @@ p.small-note {
 	opacity: .3;
 	filter: Alpha(Opacity=30);
 	border-radius: 8px;
+}
+
+.ui-autocomplete.ui-front.ui-menu.ui-widget.ui-widget-content.ui-corner-all {
+	display:none;
 }
