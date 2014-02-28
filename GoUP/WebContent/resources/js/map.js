@@ -5,8 +5,7 @@ var map;
 var marker;
 var markerArray =[];
 var routesMarkerArray = [];
-var routePolylinesArray = [];
-var markerArray = [];
+var anotherArray = [];
 var infoWindow = new google.maps.InfoWindow({
 	maxwidth: 500
 }
@@ -21,8 +20,6 @@ var upTokiRoutePath;
 var upKatipRoutePath;
 var upPhilcRoutePath;
 var visiblePath = [0,0,0,0,0];
-
-var routeMarkerArray = [];
 
 var directionsDisplay;
 var directionsService = new google.maps.DirectionsService();
@@ -324,11 +321,7 @@ var upPhilcRouteCoordinates = [
 
 function initialize() {
 	directionsDisplay = new google.maps.DirectionsRenderer();
-
-
-	
 	var myLatlng = new google.maps.LatLng(14.651147,121.060274); 
-
 
   	var mapOptions = {
     		center: myLatlng,
@@ -455,7 +448,7 @@ function path() {
 				place = $.parseJSON(json);
 				destLat = place[0].placeLat;
 				destLng = place[0].placeLong;
-				calcRoute(originLat+","+originLng, destLat+","+destLng);
+				calcRoute(originLat, originLng, destLat, destLng);
 			},
 			error: function(e){
 				alert("Error: "+ e);
@@ -465,16 +458,114 @@ function path() {
 	}
 }
 
+//google.maps.geometry.spherical.computeDistanceBetween (latLngA, latLngB);
 
-function calcRoute(originLatLngStr, destinationLatLngStr) {
+function projFactor(segLat1, segLng1, segLat2, segLng2, pLat, pLng) {
+	var dx = segLng2-segLng1;
+	var dy = segLat2-segLat1;
+	var len2 = dx*dx + dy*dy;
+	var r = ( (pLng-segLng1)*dx + (pLat-segLat1)*dy )/len2;
+	return r;
+}
+
+function project(r, segLat1, segLng1, segLat2, segLng2, pLat, pLng) {
+	var newLng = segLng1+r*(segLng2-segLng1);
+	var newLat = segLat1+r*(segLat2-segLat1);
+	var p = new google.maps.LatLng(pLat, pLng);
+	var c = new google.maps.LatLng(newLat, newLng);
+	return [google.maps.geometry.spherical.computeDistanceBetween(p, c), c];
+}
+
+function closestPoint(segLat1, segLng1, segLat2, segLng2, pLat, pLng) {
+	var r = projFactor(segLat1, segLng1, segLat2, segLng2, pLat, pLng);
+	if(r > 0.0 && r < 1.0)
+		return project(r, segLat1, segLng1, segLat2, segLng2, pLat, pLng);
+	var s1 = new google.maps.LatLng(segLat1, segLng1);
+	var s2 = new google.maps.LatLng(segLat2, segLng2);
+	var p = new google.maps.LatLng(pLat, pLng);
+	var dis1 = google.maps.geometry.spherical.computeDistanceBetween(s1, p);
+	var dis2 = google.maps.geometry.spherical.computeDistanceBetween(s2, p);
+	if(dis1 < dis2) return [dis1, s1];
+	return [dis2, s2];
+}
+
+function calcIkot(originLat, originLng, destLat, destLng) {
+	var start;
+	var end;
+	var originLatNum = parseFloat(originLat);
+	var originLngNum = parseFloat(originLng);
+	var destLatNum = parseFloat(destLat);
+	var destLngNum = parseFloat(destLng);
+	var originLatLng = new google.maps.LatLng(originLatNum, originLngNum);
+	var destLatLng = new google.maps.LatLng(destLatNum, destLngNum);
+	
+	var mindist1 = null;
+	var mindist2 = null;
+	for(var i = 0; i < upIkotRouteCoordinates.length; i++) {
+		var p1 = upIkotRouteCoordinates[i];
+		var p2 = upIkotRouteCoordinates[(i+1)%upIkotRouteCoordinates.length];
+		var data = closestPoint(p1.lat(), p1.lng(), p2.lat(), p2.lng(), originLatNum, originLngNum);
+		if(mindist1 == null || mindist1 > data[0]) {
+			mindist1 = data[0];
+			start = data[1];
+		}
+		data = closestPoint(p1.lat(), p1.lng(), p2.lat(), p2.lng(), destLatNum, destLngNum);
+		if(mindist2 == null || mindist2 > data[0]) {
+			mindist2 = data[0];
+			end = data[1];
+		}
+	}
+	
+	var path1 = [originLatLng, start];
+	var path2 = [end, destLatLng];
+	
+	var line1 = new google.maps.Polyline({
+        path: path1,
+        geodesic: true,
+        strokeColor: '#fff000',
+        strokeOpacity: 0.80,
+        strokeWeight: 4,
+        icons: [{
+            icon: lineSymbol,
+            offset: '100%'
+          }]
+      });
+	var line2 = new google.maps.Polyline({
+        path: path2,
+        geodesic: true,
+        strokeColor: '#fff000',
+        strokeOpacity: 0.80,
+        strokeWeight: 4,
+        icons: [{
+            icon: lineSymbol,
+            offset: '100%'
+          }]
+      });
+	var len = routesMarkerArray.length;
+	for(var i = 0; i < anotherArray.length; i++)
+		anotherArray[i].setMap(null);
+	anotherArray = [];
+	anotherArray[0] = line1;
+	anotherArray[1] = line2;
+	$("div#routes").append('<div class="col-md-1"><a class="routejeep-link">'+(len+1)+'</a></div> ');
+	$("div#routes").append("<br />");
+	$(document).ready(function() {
+	    $(".routejeep-link").click(function() {
+	    	$("div#routelength").html("");
+	    	hideRouteMarkers();
+	    	anotherArray[0].setMap(map);
+	    	anotherArray[1].setMap(map);
+	    	directionsDisplay.setMap(null);
+	    	if(visiblePath[0] == 0) ikotRoute();
+	    });
+	});
+}
+
+function calcRoute(originLat, originLng, destLat, destLng) {
+	var originLatLngStr = originLat+","+originLng;
+	var destinationLatLngStr = destLat+","+destLng;
 
 	  clearMarkers();
-
-	 for (var i = 0; i < routeMarkerArray.length; i++) {
-	    routeMarkerArray[i].setMap(null);
-	  }
-	 routeMarkerArray = [];
-	  
 
 	  var request = {
 	      origin:originLatLngStr,
@@ -485,11 +576,11 @@ function calcRoute(originLatLngStr, destinationLatLngStr) {
 	  directionsService.route(request, function(response, status) {
 	    if (status == google.maps.DirectionsStatus.OK) {
 	    	$("div#routes").html("");
+	    	$("div#routelength").html("");
     	 for(var i = 1; i <= response.routes.length; i++) {
-    		 
+    		 routesMarkerArray[i-1] = [];
 	    	  $("div#routes").append('<div class="col-md-1"><a class="route-link" data-index='+(i-1)+'>'+i+'</a></div> ');
 	      }
-    	 $("div#routes").append("<br />");
 	      directionsDisplay.setMap(map);
 	      directionsDisplay.setDirections(response);
 	      drawRoutesMarkers(response, 0);
@@ -498,18 +589,20 @@ function calcRoute(originLatLngStr, destinationLatLngStr) {
 	    $(document).ready(function() {
     	    $(".route-link").click(function() {
     	    	var index = $(this).data("index");
-    	    	clearMarkers();
+    	    	hideRouteMarkers();
+    	    	$("div#routelength").html("");
+    	    	if(directionsDisplay.getMap() == null) directionsDisplay.setMap(map);
+    	    	if(visiblePath[0] == 1) ikotRoute();
     	    	directionsDisplay.setRouteIndex(index);
     	    	drawRoutesMarkers(response, index);
     	    });
     	});
+	    
+	    calcIkot(originLat, originLng, destLat, destLng);
 	  });
-	 
-	  
 }
 
 function drawRoutesMarkers(directionResult, ind) {
-	
 	var distance = 0.0;
 	var myRoute = directionResult.routes[ind].legs[0];
 	  for (var i = 0; i < myRoute.steps.length; i++) {
@@ -519,10 +612,10 @@ function drawRoutesMarkers(directionResult, ind) {
 	      map: map
 	    });
 	    attachInstructionText(newMarker, myRoute.steps[i].instructions);
-	    routesMarkerArray[i] = newMarker;
+	    routesMarkerArray[ind][i] = newMarker;
 	    newMarker = null;
 	  }
-	  //$("div#routes").append(distance+" m <br />");
+	  $("div#routelength").html(distance+" m <br />");
 }
 
 function attachInstructionText(marker, text) {
@@ -532,6 +625,29 @@ function attachInstructionText(marker, text) {
 	  });
 }
 
+function clearMarkers(){
+	for(var i=0;i<markerArray.length;i++){
+		markerArray[i].setMap(null);
+	}
+	markerArray = [];
+	
+	for(var i = 0; i < routesMarkerArray.length; i++) {
+		for(var j = 0; j < routesMarkerArray[i].length; j++) {
+			routesMarkerArray[i][j].setMap(null);
+		}
+	}
+	routesMarkerArray = [];
+}
+
+function hideRouteMarkers(){
+	for(var i = 0; i < routesMarkerArray.length; i++) {
+		for(var j = 0; j < routesMarkerArray[i].length; j++) {
+			routesMarkerArray[i][j].setMap(null);
+		}
+	}
+	anotherArray[0].setMap(null);
+	anotherArray[1].setMap(null);
+}
 
 function setInitPanAndZoom(){
 	
@@ -633,20 +749,6 @@ function panToLatLng(placeName,placeLat,placeLong){
 	
 }
 
-function clearMarkers(){
-	for(var i=0;i<markerArray.length;i++){
-		markerArray[i].setMap(null);
-	}
-	markerArray = [];
-	
-	for(var i = 0; i < routesMarkerArray.length; i++) {
-		for(var j = 0; j < routesMarkerArray[i].length; j++) {
-			routesMarkerArray[i][j].setMap(null);
-		}
-	}
-	routesMarkerArray = [];
-}
-
 var autoCompleteCategory = "";
 function getAllPlaceNames(){
 	
@@ -711,9 +813,6 @@ function getMyPlaces(){
 			return null;
 		}
 	});
-	
-
-	
 	
 }
 
@@ -945,10 +1044,6 @@ function doSearchOptimized(category,placeName){
 								zoomTo();
 							else
 								zoomOut();
-							
-							
-							
-				
 						});
 						
 					}
@@ -967,11 +1062,6 @@ function doSearchOptimized(category,placeName){
 			    	    				placeLong: placeLong  };
 			    	    	
 			    	    	addRecentlySearchedPlace(object);
-			    	    		
-			    	    	
-			    	    	
-			    	    	
-			    	    	
 			    	    });
 			    	    
 			    	    $(".favorite-star").click(function() {
@@ -991,8 +1081,6 @@ function doSearchOptimized(category,placeName){
 				    	    			return false;
 				    	    		}
 				    	    		}
-				    	    	
-				    	    			
 				    	    	
 				    	    	)){
 				    	    		$(this).addClass('active');
@@ -1022,29 +1110,13 @@ function doSearchOptimized(category,placeName){
 				    	    		
 				    	    	}
 			    	    	}
-			    	    	
-			    	    	
-			    	    	
-			    	    	
-			    	    	
-			    	    	
-			    	    	
-			    	    	
 			    	    });
-			    	    
-			    
-			    	    
-			    	    
+
 			    	    $(".category-link").click(function() {
 			    	    	var category = "";
 			    	    	var placeName = $(this).text();
-			    	    	
-			    	    	
 			    	    	doSearchOptimized(category,placeName);
-			    	    	
-			    	    	
 			    	    });
-			    
 			    	});
 				}
 			
