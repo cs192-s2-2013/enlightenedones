@@ -131,7 +131,6 @@ public class HomePageController {
 		    } catch (IOException e) {
 		       e.printStackTrace();
 		    }
-			//System.out.println(test);
 			return json;
 			
 			
