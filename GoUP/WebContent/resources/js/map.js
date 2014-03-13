@@ -5,6 +5,10 @@ var map;
 var marker;
 var markerArray =[];
 var routesMarkerArray = [];
+var routeDistances = [];
+var mindist = 999999;
+var minpath;
+
 var anotherArray = [];
 var infoWindow = new google.maps.InfoWindow({
 	maxwidth: 500
@@ -565,6 +569,7 @@ function calcRoute(originLat, originLng, destLat, destLng) {
 	var destinationLatLngStr = destLat+","+destLng;
 
 	  clearMarkers();
+	  mindist = 999999;
 
 	  var request = {
 	      origin:originLatLngStr,
@@ -582,6 +587,15 @@ function calcRoute(originLat, originLng, destLat, destLng) {
 	      }
 	      directionsDisplay.setMap(map);
 	      directionsDisplay.setDirections(response);
+	      routeDistances = [];
+	      for(var i = 0; i < response.routes.length; i++) {
+	    	  var dist = 0;
+	    	  for(var j = 0; j < response.routes[i].legs[0].steps.length; j++) {
+	    		  dist += response.routes[i].legs[0].steps[j].distance.value;
+	    	  }
+	    	  routeDistances[i] = dist;
+	    	  if(routeDistances[i] < mindist) { mindist = routeDistances[i]; minpath = i+1; }
+	      }
 	      drawRoutesMarkers(response, 0);
 	    }
 	    
@@ -602,10 +616,8 @@ function calcRoute(originLat, originLng, destLat, destLng) {
 }
 
 function drawRoutesMarkers(directionResult, ind) {
-	var distance = 0.0;
 	var myRoute = directionResult.routes[ind].legs[0];
 	  for (var i = 0; i < myRoute.steps.length; i++) {
-		distance += myRoute.steps[i].distance.value;
 	    var newMarker = new google.maps.Marker({
 	      position: myRoute.steps[i].start_location,
 	      map: map
@@ -614,7 +626,8 @@ function drawRoutesMarkers(directionResult, ind) {
 	    routesMarkerArray[ind][i] = newMarker;
 	    newMarker = null;
 	  }
-	  $("div#routelength").html(distance+" m <br />");
+	  $("div#routelength").html(routeDistances[ind]+" m <br />");
+	  $("div#routelength").append("Minimum distance: "+mindist+" m (Path "+minpath+")<br />");
 }
 
 function attachInstructionText(marker, text) {
@@ -891,7 +904,7 @@ function hideGetDirections(){
 		display = display - 1;
 		showOrHideFeature();
 		clearMarkers();
-		directionsDisplay.setMap(map);
+		directionsDisplay.setMap();
 	}
 }
 
@@ -1066,15 +1079,21 @@ function doSearchOptimized(category,placeName){
 					else
 						$("div#results").append('<p><b style="font-size:20px">'+ searchString+'</b><br />'+ place.length +' result found.</p>');
 					
-					
+					var string = "";
+					var page = 1;
 					for(var i = 0; i < place.length; i++) {
 						
-						var letter= String.fromCharCode('A'.charCodeAt() + i);
-						var string = "";
+						var count = i % 10;
+						var letter= String.fromCharCode('A'.charCodeAt() + count);
+						
+						if(count==0) {
+							string = string + '<div id="results-' + page +'" class="results-page">';
+						}
 						string = string + '<div class="results-item">';
 						string = string + '<div class="marker-label"><a class="map-marker">'+letter+'</a></div>';
 						string = string + '<div class="results-details"><a class="place-link" data-index="'+ i + '" data-placename="'+place[i].placeName +'" data-latitude="' +place[i].placeLat + '" data-longitude="'+place[i].placeLong +'">' + place[i].placeName + '</a><br />';
 						string = string + '<p class="small-note">Category: <a class="category-link">'+ place[i].placeCategory +'</a></p></div>';
+						
 						
 						var myPlaceObj = new Object({
 							userId: userId,
@@ -1091,13 +1110,21 @@ function doSearchOptimized(category,placeName){
 						string = string + '<div class="favorite-star-wrapper"><a class="'+ starclass +'" data-placeid="'+place[i].placeId +'"></a></div>';
 						string = string + '</div>';
 						
+						if(count==9||i==place.length-1) {
+							string = string + '</div>';
+							$("div#results").append(string);
+							page++;
+							string = "";
+						}
 						
-						$("div#results").append(string);
+						
+						
 						var markerPosition = new google.maps.LatLng(place[i].placeLat,place[i].placeLong);
 						var newMarker = new google.maps.Marker({
 						    position: markerPosition,
 						    map: map,
-						    title: place[i].placeName
+						    title: place[i].placeName,
+						    placeId: place[i].placeId
 						      
 						});
 						
@@ -1110,7 +1137,11 @@ function doSearchOptimized(category,placeName){
 							);  
 						newMarker.setIcon(markerIcon);
 						markerArray.push(newMarker);
-						newMarker.setMap(map);
+					
+						if(i<10)
+							newMarker.setMap(map);
+						else
+							newMarker.setMap(null);
 						
 						/*--------------------------------------------------
 						Object: marker
@@ -1121,8 +1152,11 @@ function doSearchOptimized(category,placeName){
 							zoomFluid = map.getZoom();
 							infoWindow.close();
 							map.panTo(this.getPosition());
-							infoWindow.setContent('<div class="info-window"><p>'+this.getTitle()+'</p></div>');
+							
+							infoWindow.setContent('<div class="info-window"><p>'+this.title+'</p></div>');
+							
 							infoWindow.open(map, this);
+							getJeepneysToPlace(this.placeId);
 							if(zoomFluid<=17)
 								zoomTo();
 							else
@@ -1130,6 +1164,9 @@ function doSearchOptimized(category,placeName){
 						});
 						
 					}
+					
+					
+					
 					$(document).ready(function() {
 			    	    $(".place-link").click(function() {
 			    	    	var placeLat = $(this).data("latitude");
@@ -1201,7 +1238,12 @@ function doSearchOptimized(category,placeName){
 			    	    	doSearchOptimized(category,placeName);
 			    	    });
 			    	});
+					
+					paginateResults(1,page);
+					
 				}
+				
+				
 			
 			}else{
 				document.getElementById('results').innerHTML="<p>Sorry, no results found.</p>";
@@ -1221,7 +1263,23 @@ function doSearchOptimized(category,placeName){
 	
 }
 
-
+function paginateResults(pageIndex, pageCount){
+	var index = 1;
+	for(var i=0; i<pageCount-1; i++){
+		
+		var target = "div#results-" + index;
+		
+		if(i==pageIndex-1){
+			$(target).show();
+		}else{
+			$(target).hide();
+		}
+		
+		
+		
+		index++;
+	}
+}
 
 function categoryOnChange(){
 	
@@ -1312,12 +1370,53 @@ function searchPlaceEnter() {
 	
 }
 
+function getPlacesPassedByJeepney(){
+	
+	$.ajax({
+	
+		type: "Get",
+		url: "/UPMap/getPlacesPassedByJeepney",
+		success: function(json){
+			
+		},
+		error: function(e){
+			alert("error: " + e);
+		}
+		
+	}
+	);
+	
+	
+}
 
+function getJeepneysToPlace(placeId){
+	
+
+	$.ajax({
+	
+		type: "Get",
+		url: "/UPMap/getJeepneysToPlace",
+		data: "placeId="+placeId,
+		success: function(json){
+			if(json!=null)
+			$("div.info-window").append('<p>Jeepneys Passing By: '+json +'</p>');
+		},
+		error: function(e){
+			alert("error: " + e);
+		}
+		
+	}
+	);
+	
+	
+}
 
 
 
 $(document).ready(function(){
 
+	getPlacesPassedByJeepney();
+	getJeepneysToPlace("67");
 	getCategories();
 	getAllPlaceNames();
 	getMyPlaces();

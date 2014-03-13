@@ -560,6 +560,7 @@ input[placeholder], [placeholder], *[placeholder] {
 
 .info-window {
 	min-width: 200px;
+	min-height: 150px;
 }
 
 .recent-place a{
@@ -619,6 +620,14 @@ input[placeholder], [placeholder], *[placeholder] {
 	width:100%;
 	overflow:hidden;
 	border-right: 3px solid transparent;
+}
+
+.results-page {
+	padding: 0px !important;
+}
+
+.results-page > *{
+	padding: 8px !important;
 }
 
 .results-item:hover {

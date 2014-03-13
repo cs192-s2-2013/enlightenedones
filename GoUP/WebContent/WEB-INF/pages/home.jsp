@@ -107,8 +107,8 @@
   						  logging: true, 
   						  onrendered: function(canvas) {
   							var img = canvas.toDataURL();
-  							var w;
-  							w.location = img;
+  							
+  							window.open(img);
   							
   							
   						  }

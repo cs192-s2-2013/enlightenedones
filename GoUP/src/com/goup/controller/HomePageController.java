@@ -220,4 +220,35 @@ public class HomePageController {
 		}
 	}  
 	
+	@RequestMapping("/getPlacesPassedByJeepney")
+	public @ResponseBody String getPlacesPassedByJeepney() throws JsonGenerationException, JsonMappingException, IOException{
+		ObjectMapper mapper = new ObjectMapper();
+		List<List<Place>> placeList= new ArrayList<List<Place>>();
+		placeList = placeService.getPlacesPassedByJeepney(); 
+		String json = mapper.writeValueAsString(placeList);
+		
+		if (placeList!=null){
+			return json;
+		}else{
+			return null;
+		}
+		
+	}
+	
+	@RequestMapping("/getJeepneysToPlace")
+	public @ResponseBody String getJeepneysToPlace(@RequestParam(value = "placeId") String placeId) throws JsonGenerationException, JsonMappingException, IOException{
+		ObjectMapper mapper = new ObjectMapper();
+		List<String> placeList= new ArrayList<String>();
+		placeList = placeService.getJeepneysToPlace(placeId);
+		String json;
+		
+		if (placeList.size()>0){
+			json = mapper.writeValueAsString(placeList);
+			return json;
+		}else{
+			return null;
+		}
+		
+	}
+	
 }

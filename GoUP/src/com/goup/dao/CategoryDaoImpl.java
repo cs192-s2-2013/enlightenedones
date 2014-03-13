@@ -19,7 +19,7 @@ public class CategoryDaoImpl implements CategoryDao {
 	@Override
 	public List<Category> getCategories() {
 		List<Category> categoryList = new ArrayList<Category>();
-		String sql = "Select * from categories";
+		String sql = "Select * from categories order by category_name";
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		categoryList = jdbcTemplate.query(sql, new CategoryRowMapper());
 		

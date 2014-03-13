@@ -9,4 +9,5 @@ public interface MyPlaceDao {
 	public void deleteData(MyPlace myPlace);
 	public List<MyPlace> getMyPlaces(String userId);
 	
+	
 }

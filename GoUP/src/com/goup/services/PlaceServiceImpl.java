@@ -31,5 +31,15 @@ public class PlaceServiceImpl implements PlaceService {
 	public List<Place> searchPlaceByCategoryAndName(String category,String placeName){
 		return placedao.searchPlaceByCategoryAndName(category,placeName);
 	}
+	
+	@Override
+	public List<List<Place>> getPlacesPassedByJeepney(){
+		return placedao.getPlacesPassedByJeepney();
+	}
+	
+	@Override
+	public List<String> getJeepneysToPlace(String placeId){
+		return placedao.getJeepneysToPlace(placeId);
+	}
 }
 
