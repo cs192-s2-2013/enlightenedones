@@ -8,8 +8,12 @@ var routesMarkerArray = [];
 var routeDistances = [];
 var mindist = 999999;
 var minpath;
+var ikotdistance;
 
-var anotherArray = [];
+var ridePath;
+var walkPath;
+var rideMarkers = [];
+var walkMarkers = [];
 var infoWindow = new google.maps.InfoWindow({
 	maxwidth: 500
 }
@@ -420,8 +424,10 @@ function path() {
 	var dest = $("#searchDestinationPlaceName").val();
 	if(origin == "" || dest == "") {
 		clearMarkers();
+		if(visiblePath[0] == 1) ikotRoute();
 		directionsDisplay.setMap();
 		$("div#routes").html("");
+		$("div#routelength").html("");
 	}
 	else {
 		var originLat = "";
@@ -501,6 +507,8 @@ function calcIkot(originLat, originLng, destLat, destLng) {
 	var destLngNum = parseFloat(destLng);
 	var originLatLng = new google.maps.LatLng(originLatNum, originLngNum);
 	var destLatLng = new google.maps.LatLng(destLatNum, destLngNum);
+	ikotdistance = 0.0;
+	var i1, i2;
 	
 	var mindist1 = null;
 	var mindist2 = null;
@@ -511,57 +519,90 @@ function calcIkot(originLat, originLng, destLat, destLng) {
 		if(mindist1 == null || mindist1 > data[0]) {
 			mindist1 = data[0];
 			start = data[1];
+			i1 = i;
 		}
 		data = closestPoint(p1.lat(), p1.lng(), p2.lat(), p2.lng(), destLatNum, destLngNum);
 		if(mindist2 == null || mindist2 > data[0]) {
 			mindist2 = data[0];
 			end = data[1];
+			i2 = i;
 		}
 	}
 	
-	var path1 = [originLatLng, start];
-	var path2 = [end, destLatLng];
+	for(var trace = i1; trace != i2; trace=(trace+1)%upIkotRouteCoordinates.length) {
+		var p1 = upIkotRouteCoordinates[trace];
+		var p2 = upIkotRouteCoordinates[(trace+1)%upIkotRouteCoordinates.length];
+		ikotdistance += google.maps.geometry.spherical.computeDistanceBetween(p1,p2);
+	}
+
+	var from1 = originLat+","+originLng;
+	var to1 = start.lat()+","+start.lng();
+	var from2 = end.lat()+","+end.lng();
+	var to2 = destLat+","+destLng;
+	var request1 = {
+		      origin:from1,
+		      destination:to1,
+		      travelMode:google.maps.TravelMode.WALKING
+	};
+	var request2 = {
+		      origin:from2,
+		      destination:to2,
+		      travelMode:google.maps.TravelMode.WALKING
+	};
 	
-	var line1 = new google.maps.Polyline({
-        path: path1,
-        geodesic: true,
-        strokeColor: '#fff000',
-        strokeOpacity: 0.80,
-        strokeWeight: 4,
-        icons: [{
-            icon: lineSymbol,
-            offset: '100%'
-          }]
-      });
-	var line2 = new google.maps.Polyline({
-        path: path2,
-        geodesic: true,
-        strokeColor: '#fff000',
-        strokeOpacity: 0.80,
-        strokeWeight: 4,
-        icons: [{
-            icon: lineSymbol,
-            offset: '100%'
-          }]
-      });
-	var len = routesMarkerArray.length;
-	for(var i = 0; i < anotherArray.length; i++)
-		anotherArray[i].setMap(null);
-	anotherArray = [];
-	anotherArray[0] = line1;
-	anotherArray[1] = line2;
-	$("div#routes").append('<div class="col-md-1"><a class="routejeep-link">'+(len+1)+'</a></div> ');
-	$("div#routes").append("<br />");
-	$(document).ready(function() {
-	    $(".routejeep-link").click(function() {
+	directionsService.route(request1, function(response1, status) {
+	    if (status == google.maps.DirectionsStatus.OK) {
+	    	ridePath = response1;
 	    	$("div#routelength").html("");
-	    	hideRouteMarkers();
-	    	anotherArray[0].setMap(map);
-	    	anotherArray[1].setMap(map);
-	    	directionsDisplay.setMap(null);
-	    	if(visiblePath[0] == 0) ikotRoute();
-	    });
-	});
+	    	$("div#routes").append('<div class="col-md-1"><a class="routejeep-link1">Walk to Ikot'+'</a></div> ');
+	    }
+	    
+	    $(document).ready(function() {
+    	    $(".routejeep-link1").click(function() {
+    	    	hideRouteMarkers();
+    	    	$("div#routelength").html("Ikot distance: "+ikotdistance+" m");
+    	    	if(directionsDisplay.getMap() == null) directionsDisplay.setMap(map);
+    	    	if(visiblePath[0] == 0) ikotRoute();
+    	    	directionsDisplay.setDirections(ridePath);
+    	    	for (var i = 0; i < ridePath.routes[0].legs[0].steps.length; i++) {
+    	    	    var newMarker = new google.maps.Marker({
+    	    	      position: ridePath.routes[0].legs[0].steps[i].start_location,
+    	    	      map: map
+    	    	    });
+    	    	    attachInstructionText(newMarker, ridePath.routes[0].legs[0].steps.steps[i].instructions);
+    	    	    rideMarkers[i] = newMarker;
+    	    	    newMarker = null;
+    	    	 }
+    	    });
+    	});
+	    
+	    directionsService.route(request2, function(response2, status) {
+		    if (status == google.maps.DirectionsStatus.OK) {
+		    	walkPath = response2;
+		    	$("div#routelength").html("");
+		    	$("div#routes").append('<div class="col-md-1"><a class="routejeep-link2" data-index='+(i-1)+'>Walk from Ikot'+'</a></div> ');
+		    }
+		    
+		    $(document).ready(function() {
+	    	    $(".routejeep-link2").click(function() {
+	    	    	hideRouteMarkers();
+	    	    	$("div#routelength").html("Ikot distance: "+ikotdistance+" m");
+	    	    	if(directionsDisplay.getMap() == null) directionsDisplay.setMap(map);
+	    	    	if(visiblePath[0] == 0) ikotRoute();
+	    	    	directionsDisplay.setDirections(walkPath);
+	    	    	for (var i = 0; i < walkPath.routes[0].legs[0].steps.length; i++) {
+	    	    	    var newMarker = new google.maps.Marker({
+	    	    	      position: walkPath.routes[0].legs[0].steps[i].start_location,
+	    	    	      map: map
+	    	    	    });
+	    	    	    attachInstructionText(newMarker, walkPath.routes[0].legs[0].steps.steps[i].instructions);
+	    	    	    walkMarkers[i] = newMarker;
+	    	    	    newMarker = null;
+	    	    	 }
+	    	    });
+	    	});
+		  });
+	  });
 }
 
 function calcRoute(originLat, originLng, destLat, destLng) {
@@ -578,7 +619,7 @@ function calcRoute(originLat, originLng, destLat, destLng) {
 	      provideRouteAlternatives:true
 	  };
 	  directionsService.route(request, function(response, status) {
-	    if (status == google.maps.DirectionsStatus.OK) {
+		  if (status == google.maps.DirectionsStatus.OK) {
 	    	$("div#routes").html("");
 	    	$("div#routelength").html("");
     	 for(var i = 1; i <= response.routes.length; i++) {
@@ -606,6 +647,7 @@ function calcRoute(originLat, originLng, destLat, destLng) {
     	    	$("div#routelength").html("");
     	    	if(directionsDisplay.getMap() == null) directionsDisplay.setMap(map);
     	    	if(visiblePath[0] == 1) ikotRoute();
+    	    	directionsDisplay.setDirections(response);
     	    	directionsDisplay.setRouteIndex(index);
     	    	drawRoutesMarkers(response, index);
     	    });
@@ -649,6 +691,14 @@ function clearMarkers(){
 		}
 	}
 	routesMarkerArray = [];
+	for(var i = 0; i < rideMarkers.length; i++) {
+		rideMarkers[i].setMap(null);
+	}
+	for(var i = 0; i < walkMarkers.length; i++) {
+		walkMarkers[i].setMap(null);
+	}
+	rideMarkers = [];
+	walkMarkers = [];
 }
 
 function hideRouteMarkers(){
@@ -657,8 +707,12 @@ function hideRouteMarkers(){
 			routesMarkerArray[i][j].setMap(null);
 		}
 	}
-	anotherArray[0].setMap(null);
-	anotherArray[1].setMap(null);
+	for(var i = 0; i < rideMarkers.length; i++) {
+		rideMarkers[i].setMap(null);
+	}
+	for(var i = 0; i < walkMarkers.length; i++) {
+		walkMarkers[i].setMap(null);
+	}
 }
 
 function setInitPanAndZoom(){
