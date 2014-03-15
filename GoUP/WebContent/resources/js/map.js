@@ -932,10 +932,55 @@ function hideJeepneyRoutes(){
 	}
 }
 
+function showWeather(){
+	
+	
+	if($("#weather").css("display")=="none"){
+		hideAll();
+		
+	 	$(document).ready(function() {
+  		  $.simpleWeather({
+  		    location: 'UP Diliman',
+  		    woeid: '',
+  		    unit: 'c',
+  		    success: function(weather) {
+  		      html = '<div class="weather-icon"><i class="icon-'+weather.code+'"></i></div><div class="weather-temp"> '+weather.temp+'&deg;'+weather.units.temp+'</div>';
+  		      html += '<ul><li>'+weather.city+'</li>';
+  		      html += '<li class="currently">'+weather.currently+'</li>';
+  		      
+  		  
+  		      $("#weather").html(html);
+  		    },
+  		    error: function(error) {
+  		      $("#weather").html('<p>'+error+'</p>');
+  		    }
+  		  });
+  		});
+
+		
+		$("#weather").fadeIn(250);
+		display = display + 1;
+		showOrHideFeature();
+	}
+	
+
+}
+
+
+function hideWeather(){
+	
+	if($("#weather").css("display")!="none"){
+		$("#weather").hide();
+		display = display - 1;
+		showOrHideFeature();
+	}
+}
+
 function hideAll(){
 	hideMyPlaces();
 	hideGetDirections();
 	hideJeepneyRoutes();
+	hideWeather();
 	hideResults();
 	
 }
@@ -1063,7 +1108,7 @@ function doSearchOptimized(category,placeName){
 			showResults();
 			
 			if(json){
-				
+			
 				var searchString;
 				
 				
@@ -1124,7 +1169,8 @@ function doSearchOptimized(category,placeName){
 						    position: markerPosition,
 						    map: map,
 						    title: place[i].placeName,
-						    placeId: place[i].placeId
+						    placeId: place[i].placeId,
+						    index: count
 						      
 						});
 						
@@ -1240,6 +1286,9 @@ function doSearchOptimized(category,placeName){
 			    	});
 					
 					paginateResults(1,page);
+					if(page-1>1)
+						createPageLinks(page);
+					
 					
 				}
 				
@@ -1263,22 +1312,74 @@ function doSearchOptimized(category,placeName){
 	
 }
 
+function createPageLinks(pageCount){
+	
+	var index = 1;
+	pagelinks = "<div><br/>";
+	for(var i=0; i<pageCount-1; i++){
+
+		if(i==0){
+
+			pagelinks = pagelinks +'<a class="page-links active">'+ index +'</a>';
+		}else{
+
+			pagelinks = pagelinks +'<a class="page-links">'+ index +'</a>';
+		}
+		
+		index++;
+	}
+	
+	pagelinks = pagelinks +  "<br/></div>";
+	$("div#results").append(pagelinks);
+	
+
+	$(".page-links").click(
+			function(){
+				index = $(this).html();
+				lowerRange = (index*10)-10;
+	
+				upperRange = (index*10)-1;
+				paginateResults(index , pageCount);
+				$("a.page-links").removeClass("active");
+				$(this).addClass("active");
+			
+				for(var i=0;i< markerArray.length; i++){
+					if(i>=lowerRange && i<=upperRange){
+						markerArray[i].setMap(map);
+					}else{
+						markerArray[i].setMap(null);
+					}
+							
+					
+			
+				}
+				
+				
+			});
+			
+	
+}
+
 function paginateResults(pageIndex, pageCount){
 	var index = 1;
+	pagelinks = "<br/>";
 	for(var i=0; i<pageCount-1; i++){
 		
 		var target = "div#results-" + index;
 		
 		if(i==pageIndex-1){
 			$(target).show();
+
 		}else{
 			$(target).hide();
+
 		}
-		
 		
 		
 		index++;
 	}
+	
+	
 }
 
 function categoryOnChange(){

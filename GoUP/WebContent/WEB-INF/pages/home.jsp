@@ -25,6 +25,7 @@
     <script type="text/javascript" src="<c:url value="/resources/js/map.js" />"></script>
     <script type="text/javascript" src="<c:url value="/resources/js/jquery.cookie.js" />"></script>
     <script type="text/javascript" src="<c:url value="/resources/js/underscore-min.js" />"></script>
+    <script type="text/javascript" src="<c:url value="/resources/js/jquery.simpleWeather.js" />"></script>
   
     <!--End Including JS Plugins-->
  	
@@ -116,6 +117,8 @@
     					
     				});
     				
+    				
+    				
     				showOrHideFeature();
     				$('ul.ui-autocomplete').removeAttr('style');
     			    			});
@@ -123,6 +126,8 @@
     		
     	//Sets map wrapper height when page has resized
     	$(window).resize(setWrapperHeight); 
+    	
+  
     	
     </script>
     
@@ -154,6 +159,7 @@
 	  		<div class="icon-title"><a onclick="showJeepneyRoutes();"><span class="menu-icon icon-jeepney"></span>Jeepney Routes</a></div>
 	  		<br />
 	  		<div class="icon-title"><a id="screenshot"><span class="menu-icon icon-screenshot"></span>Screenshot</a></div>
+	  		<div class="icon-title"><a onclick="showWeather();"><span class="menu-icon icon-help"></span>Weather</a></div>
 	  		<div class="icon-title"><a><span class="menu-icon icon-help"></span>Help</a></div>
 	  	
 	  	</div>
@@ -251,10 +257,14 @@
 	  			
 	  			</div>
 
+	  			<div id="weather" style="display:none;">
 	  			
+	  			
+	  			
+	  			</div>
 	  			<div id="jeepneyRoutes" style="display:none;">
 	  			
-	  			
+	  				
 	  				<b style="font-size:20px;">Jeepney Routes</b>
 	  				
 						<div class="jeepney-toggle-wrapper">
