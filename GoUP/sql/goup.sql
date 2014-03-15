@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 28, 2014 at 07:49 PM
+-- Generation Time: Mar 13, 2014 at 02:23 PM
 -- Server version: 5.5.32
 -- PHP Version: 5.4.16
 
@@ -90,15 +90,6 @@ CREATE TABLE IF NOT EXISTS `myplace` (
   PRIMARY KEY (`user_id`,`place_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data for table `myplace`
---
-
-INSERT INTO `myplace` (`user_id`, `place_id`) VALUES
-('1234', 18),
-('1234', 19),
-('1234', 24);
-
 -- --------------------------------------------------------
 
 --
@@ -131,7 +122,7 @@ INSERT INTO `place` (`place_id`, `place_name`, `place_lat`, `place_long`, `place
 (9, 'Campus Maintenance Office', '14.6528490000', '121.0595670000', 'AAS', 'CMO					'),
 (10, 'Center of Ethnomusicology', '14.6565960000', '121.0653490000', 'AAS', ''),
 (11, 'Center for International Studies', '14.6535910000', '121.0708480000', 'AAS', ''),
-(12, 'CSSP Faculty Center', '14.6530050000', '121.0712500000', 'AAS C', 'Solidor Hall'),
+(12, 'CSSP Faculty Center', '14.6530050000', '121.0712500000', 'AAS', 'Solidor Hall'),
 (13, 'Department of Military Science and Tactics', '14.6581630000', '121.0642440000', 'AAS', 'DMST		'),
 (14, 'Diliman Accounting Office', '14.6564350000', '121.0617390000', 'AAS', 'DAO'),
 (15, 'Diliman Budget Office', '14.6565550000', '121.0711480000', 'AAS', 'DBO'),
@@ -340,6 +331,78 @@ INSERT INTO `place` (`place_id`, `place_name`, `place_lat`, `place_long`, `place
 (218, 'Sanggumay Residence Hall', '14.6585190000', '121.0678630000', 'DRM', 'Dorm'),
 (219, 'UP Centennial Residence Hall', '14.6476560000', '121.0625280000', 'DRM', 'Cente Dorm'),
 (220, 'Yakal Residence Hall', '14.6577640000', '121.0692010000', 'DRM', 'Dorm');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `routeikot`
+--
+
+CREATE TABLE IF NOT EXISTS `routeikot` (
+  `route_index` int(11) NOT NULL,
+  `place_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `routeikot`
+--
+
+INSERT INTO `routeikot` (`route_index`, `place_id`) VALUES
+(1, 69);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `routekatipunan`
+--
+
+CREATE TABLE IF NOT EXISTS `routekatipunan` (
+  `route_index` int(11) NOT NULL,
+  `place_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `routekatipunan`
+--
+
+INSERT INTO `routekatipunan` (`route_index`, `place_id`) VALUES
+(1, 67);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `routephilcoa`
+--
+
+CREATE TABLE IF NOT EXISTS `routephilcoa` (
+  `route_index` int(11) NOT NULL,
+  `place_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `routephilcoa`
+--
+
+INSERT INTO `routephilcoa` (`route_index`, `place_id`) VALUES
+(1, 154);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `routetoki`
+--
+
+CREATE TABLE IF NOT EXISTS `routetoki` (
+  `route_index` int(11) NOT NULL,
+  `place_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `routetoki`
+--
+
+INSERT INTO `routetoki` (`route_index`, `place_id`) VALUES
+(1, 69);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
