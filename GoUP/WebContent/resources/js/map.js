@@ -1599,10 +1599,10 @@ $(document).ready(function(){
 				var target = "div"+$(this).attr("href");
 				if($(target).hasClass("hidden")){
 					$(target).removeClass("hidden");
-					//$(target).html("List buildings here");
+					
 				}else{
 					$(target).addClass("hidden");
-					//$(target).html("");
+					
 				}
 				
 				return false;
@@ -1610,6 +1610,8 @@ $(document).ready(function(){
 			
 			
 	);
+	
+	
 	
 });
 
