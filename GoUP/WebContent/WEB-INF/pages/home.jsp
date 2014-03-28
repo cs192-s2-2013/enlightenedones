@@ -232,8 +232,19 @@
 		  				<input id="searchOriginPlaceName" class="search-input" placeholder="Where are you now?" type="text" />
 		  				<input id="searchDestinationPlaceName" class="search-input" placeholder="Where are you going?" type="text"/>
 		  				<input id="searchPathButton" class="btn btn-primary" type="button" value="Get Directions" onclick="path();" />
+		  				<select id="waypoints" onchange="addWaypts(this.value);">
+		  					<option value="0">0</option>
+		  					<option value="1">1</option>
+		  					<option value="2">2</option>
+		  					<option value="3">3</option>
+		  					<option value="4">4</option>
+		  					<option value="5">5</option>
+		  				</select>
 		  			</form>
 		  			
+		  			<div id="waypts">
+		  			
+		  			</div>
 		  			<div id="routes">
 	  			
 	  				</div>
