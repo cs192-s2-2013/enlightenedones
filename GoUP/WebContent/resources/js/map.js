@@ -10,10 +10,15 @@ var mindist = 999999;
 var minpath;
 var ikotdistance;
 
+
 var ridePath;
 var walkPath;
 var rideMarkers = [];
 var walkMarkers = [];
+
+var anotherArray = [];
+var availablePlaceNames = [];
+
 var infoWindow = new google.maps.InfoWindow({
 	maxwidth: 500
 }
@@ -418,6 +423,26 @@ function initialize() {
 	
 	
 	}
+
+function addWaypts(val) {
+	var num = parseInt(val);
+	$("div#waypts").html("");
+	if(num > 0)
+		$("div#waypts").append('<input id="waypointsButton" class="btn btn-primary" type="button" value="TSP" onclick="tsp();" /><br />');
+	for(var i = 1; i <= num; i++) {
+		$("div#waypts").append('<input id="waypoint'+i+'" class="waypoint-input" type="text"/><br />');
+	}
+	
+	$(document).ready(function() {
+		$(".waypoint-input").autocomplete({
+			source: availablePlaceNames
+		});
+	});
+}
+
+function tsp() {
+	
+}
 
 function path() {
 	var origin = $("#searchOriginPlaceName").val();
@@ -833,8 +858,6 @@ function panToLatLng(placeName,placeLat,placeLong){
 
 var autoCompleteCategory = "";
 function getAllPlaceNames(){
-	
-	var availablePlaceNames = [];
 	$.ajax({
 		type: "Get",
 		url: "/UPMap/findPlaceByCategoryAndName",
