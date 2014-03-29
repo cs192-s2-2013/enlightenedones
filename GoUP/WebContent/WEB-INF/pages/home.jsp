@@ -161,14 +161,14 @@
 		</div>
 	  	
 	  	<div id="menu">
-	  		<div class="icon-title"><a onclick="viewMyPlaces();"><span class="menu-icon icon-myplaces"></span>My Places</a></div>
-	  		<div class="icon-title"><a onclick="viewGetDirections();"><span class="menu-icon icon-directions"></span>Get Directions</a></div>
-	  		<div class="icon-title medium"><a onclick="showJeepneyRoutes();"><span class="menu-icon icon-jeepney"></span>Jeepney</a></div>
-	  		<div class="icon-title"><a onclick="showTrivia();"><span class="menu-icon icon-help"></span>Trivia</a></div>
+	  		<div id= "buttonPlace" class="icon-title"><a onclick="viewMyPlaces();"><span class="menu-icon icon-myplaces"></span>My Places</a></div>
+	  		<div id= "buttonDirect" class="icon-title"><a onclick="viewGetDirections();"><span class="menu-icon icon-directions"></span>Get Directions</a></div>
+	  		<div id= "buttonRoute" class="icon-title medium"><a onclick="showJeepneyRoutes();"><span class="menu-icon icon-jeepney"></span>Jeepney</a></div>
+	  		<div id= "buttonTrivia" class="icon-title"><a onclick="showTrivia();"><span class="menu-icon icon-help"></span>Trivia</a></div>
 	  		<br />
-	  		<div class="icon-title"><a id="screenshot"><span class="menu-icon icon-screenshot"></span>Screenshot</a></div>
-	  		<div class="icon-title"><a onclick="showWeather();"><span class="menu-icon icon-weather"></span>Weather</a></div>
-	  		<div class="icon-title medium"><a onclick="showHelp();"><span class="menu-icon icon-help"></span>Help</a></div>
+	  		<div id= "buttonScreen" class="icon-title"><a id="screenshot"><span class="menu-icon icon-screenshot"></span>Screenshot</a></div>
+	  		<div id= "buttonWeather" class="icon-title"><a onclick="showWeather();"><span class="menu-icon icon-weather"></span>Weather</a></div>
+	  		<div id= "buttonHelp" class="icon-title medium"><a onclick="showHelp();"><span class="menu-icon icon-help"></span>Help</a></div>
 	  	
 	  	</div>
 	  					
@@ -198,8 +198,7 @@
 	  			
 
 	  			<div id="welcome"style="display:none;">
-	  			<div id="numero2">adahsdhasdhah</div>
-	  			
+	  				  			
 	  				<section id="one" class="feature-panel" data-type="background" data-speed="10">
 	  					<div class="feature-text">
 	  						<div class="feature-title">Welcome to Go UP!</div>
@@ -589,21 +588,87 @@
 	  			
 	  			
 	  			
-	  		<ol id="joyRideTipContent">
-   
-      <li data-id="numero2" data-button="Next" data-options="tipLocation:top;tipAnimation:fade">
-        <h2>Stop #2</h2>
-        <p>Get the details right by styling Joyride with a custom stylesheet!</p>
-      </li>
-
-      <li data-button="Next">
-        <h2>Stop #4</h2>
-        <p>It works as a modal too!</p>
-      </li>
- 
-    </ol>
-
-	  			
+				  <ol id="joyRideTipContent">
+			   
+			      <li data-id="welcome" data-button="Next" data-options="tipLocation:right;tipAnimation:fade">
+			        <h2>Welcome to UP MAP!</h2>
+			        <p>An online map of the University of the Philippines Diliman
+			        	that aims to help people find their way around the campus!</p>
+			      </li>
+			      
+			      <li data-id="map-wrapper" data-button="Next" data-options="tipLocation:left;tipAnimation:fade">
+			        <h2>Google Map</h2>
+			        <p>With an embedded Google Map. Finding roads, buildings and waypoints
+			        	are a piece of cake!</p>
+			      </li>
+			
+				  <li data-id="nav" data-button="Next" data-options="tipLocation:bottom;tipAnimation:fade">
+			        <h2>Quick Navigation</h2>
+			        <p>Easy On-Click way to navigate through the many useful functions
+			        	in the site.</p>
+			      </li>
+			      
+			      <li data-id="welcome" data-button="Next" data-options="tipLocation:right;tipAnimation:fade">
+			        <h2>Quick Navigation</h2>
+			        <p>Easy On-Click way to navigate through the many useful functions
+			        	in the site.</p>
+			      </li>
+			      
+			      <li data-id="searchForm" data-button="Next" data-options="tipLocation:right;tipAnimation:fade">
+			        <h2>Quick Search</h2>
+			        <p>Need to search for a building? Search it here to pinpoint it in the Google Map.</p>
+			        <p>Choose a Category to filter your results.</p>
+			      </li>
+			      
+			      <li data-id="menu" data-button="Next" data-options="tipLocation:left;tipAnimation:fade">
+			        <h2>Menu</h2>
+			        <p>Try out our different functions that will help you on your UP Map
+			        	experience!</p>
+			      </li>
+			      
+			      <li data-id="buttonPlace" data-button="Next" data-options="tipLocation:left;tipAnimation:fade">
+			        <h2>My Places</h2>
+			        <p>View your favorite places and recent searches here!</p>
+			      </li>
+			      
+			      <li data-id="buttonDirect" data-button="Next" data-options="tipLocation:left;tipAnimation:fade">
+			        <h2>Get Direction</h2>
+			        <p>Need to find a route from here to there? Try out our Route Finding!</p>
+			      </li>
+			      
+			      <li data-id="buttonRoute" data-button="Next" data-options="tipLocation:left;tipAnimation:fade">
+			        <h2>Jeepney</h2>
+			        <p>Find which buildings, the jeeps in UPD passes by.</p>
+			      </li>
+			      
+			      <li data-id="buttonTrivia" data-button="Next" data-options="tipLocation:left;tipAnimation:fade">
+			        <h2>Trivia</h2>
+			        <p>Browse through random interesting facts about U.P.D.</p>
+			      </li>
+			      
+			      <li data-id="buttonScreen" data-button="Next" data-options="tipLocation:left;tipAnimation:fade">
+			        <h2>Screenshot</h2>
+			        <p>Grab a Screenshot of the current view of the Map</p>
+			      </li>
+			      
+			      <li data-id="buttonWeather" data-button="Next" data-options="tipLocation:left;tipAnimation:fade">
+			        <h2>Weather</h2>
+			        <p>How's the weather up there?</p>
+			      </li>
+			      
+			      <li data-id="buttonHelp" data-button="Next" data-options="tipLocation:left;tipAnimation:fade">
+			        <h2>Help</h2>
+			        <p>This is what you clicked.</p>
+			      </li>
+			      
+			      <li data-button="End">
+			        <h2>The End</h2>
+			        <p>Hope this helps!</p>
+			        <p>Enjoy!</p>
+			        
+			      </li>
+			    </ol>
+  			
 	  			
 	  			
 	  			
