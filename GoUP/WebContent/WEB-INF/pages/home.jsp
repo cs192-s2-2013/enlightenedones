@@ -10,6 +10,7 @@
     <link href="<c:url value="/resources/css/bootstrap.css" />" rel="stylesheet"/>
     <link href="<c:url value="/resources/css/font-awesome.css" />" rel="stylesheet"/>
     <link href="<c:url value="/resources/css/global.css" />" rel="stylesheet"/>
+    <link href="<c:url value="/resources/css/joyride-2.1.css" />" rel="stylesheet"/>
  
     <!--End Including Stylesheets-->
     
@@ -19,6 +20,8 @@
     <script src="//code.jquery.com/jquery-1.9.1.js"></script>
     <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
     <script src="<c:url value="/resources/js/bootstrap.js" />"></script>
+    <script type="text/javascript" src="<c:url value="/resources/js/jquery.joyride-2.1.js" />"></script>
+    <script type="text/javascript" src="<c:url value="/resources/js/modernizr.mq.js" />"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry&key=AIzaSyCblPnV936VjhXRneHrOKPl_aB1hozPlFU&sensor=false">
     </script>
     <script type="text/javascript" src="<c:url value="/resources/js/html2canvas.js" />"></script>
@@ -62,6 +65,8 @@
     	
     	//Sets map wrapper height when page has loaded
     	$(document).ready(
+    			
+    			
     			function(){
     				setWrapperWidth();
     				setWrapperHeight();
@@ -100,6 +105,8 @@
     					
     				});
     				
+    		
+
     				
     				$('#screenshot').click(function(){
     					html2canvas($('#map-canvas'), {
@@ -123,12 +130,12 @@
     				$('ul.ui-autocomplete').removeAttr('style');
     			    			});
     	
+    	
     		
     	//Sets map wrapper height when page has resized
     	$(window).resize(setWrapperHeight); 
     	
   
-    	
     </script>
     
   </head>
@@ -156,11 +163,12 @@
 	  	<div id="menu">
 	  		<div class="icon-title"><a onclick="viewMyPlaces();"><span class="menu-icon icon-myplaces"></span>My Places</a></div>
 	  		<div class="icon-title"><a onclick="viewGetDirections();"><span class="menu-icon icon-directions"></span>Get Directions</a></div>
-	  		<div class="icon-title"><a onclick="showJeepneyRoutes();"><span class="menu-icon icon-jeepney"></span>Jeepney Routes</a></div>
+	  		<div class="icon-title medium"><a onclick="showJeepneyRoutes();"><span class="menu-icon icon-jeepney"></span>Jeepney</a></div>
+	  		<div class="icon-title"><a onclick="showTrivia();"><span class="menu-icon icon-help"></span>Trivia</a></div>
 	  		<br />
 	  		<div class="icon-title"><a id="screenshot"><span class="menu-icon icon-screenshot"></span>Screenshot</a></div>
-	  		<div class="icon-title"><a onclick="showWeather();"><span class="menu-icon icon-help"></span>Weather</a></div>
-	  		<div class="icon-title"><a><span class="menu-icon icon-help"></span>Help</a></div>
+	  		<div class="icon-title"><a onclick="showWeather();"><span class="menu-icon icon-weather"></span>Weather</a></div>
+	  		<div class="icon-title medium"><a onclick="showHelp();"><span class="menu-icon icon-help"></span>Help</a></div>
 	  	
 	  	</div>
 	  					
@@ -190,6 +198,8 @@
 	  			
 
 	  			<div id="welcome"style="display:none;">
+	  			<div id="numero2">adahsdhasdhah</div>
+	  			
 	  				<section id="one" class="feature-panel" data-type="background" data-speed="10">
 	  					<div class="feature-text">
 	  						<div class="feature-title">Welcome to Go UP!</div>
@@ -273,6 +283,38 @@
 	  			
 	  			
 	  			</div>
+	  			
+	  			<div id="trivia" style="display:none;">
+	  				FUN FACTS AND TRIVIA ABOUT UP DILIMAN.<br/>
+					1. The bird in the UP Seal is a parrot not an eagle.<br/>
+					2. There is only 1 coconut tree around the sunken garden.<br/>
+					3. Sunken garden is still sunking.<br/>
+					4. in 1960's lagoon is a golf course.<br/>
+					5. The original oblation can be found in the archives section of the main library<br/>
+					6. Fernando Poe Sr. is the model of oblation.<br/>
+					7. Color coding for jeep, yellow for ikot and toki, red for katipunan and green for sm, pantranco and philcoa.<br/>
+					8. CAL, CSSP and CS is called tricol.<br/>
+					9. Aristocarts are the original names of shops that sells pancit canton, kwek-kwek etc.<br/>
+					10. Acad Oval is 2.2 kilometers long.<br/>
+					11. Theres a room  directly below oblation.<br/>
+					12. There's a virgin forest inside UP it is called Arboretum.<br/>
+					13. The official name of Sunken Garden is General Luna Parade Grounds.<br/>
+					14. You can rotate the sculpture in front of College of Business Administration.<br/>
+					15. You can not enter DMST wearing only shorts or slippers.<br/>
+					16. The one who design UP Chapel is Leandro Locsin, First National  Artist for Architecture.<br/>
+					17. The original statue of Bonifacio if moved from Balintawak to Vinzon's Hall.<br/>
+					18. There is a University wide Prom, the Cadena de Amor.<br/>
+					19. Every monday in front of Palma Hall, National anthem and UP naming mahal is played.<br/>
+					20. Oblation is 3.5 meters tall and symbolizes 359 years of Spanish Regime.<br/>
+					21. UP College of Architecture is the only College that offers landscape architecture course in the Philippines.<br/>
+					22. There's one and only intersection in the UP where traffic light is working, the Melchor and Tennis court intersection.<br/>
+					23. UP is a non-smoking area.<br/>
+					24. UP Observatory is the highest point in UP Diliman.<br/>
+					25. Sunken Garden is the lowest point in UP Diliman.<br/>
+					26. Ikot, SM and pantranco jeeps are out aroung 9pm, katipunan jeep around 10pm and Philcoa is around 11pm.<br/>
+						  			
+	  			</div>
+	  			
 	  			<div id="jeepneyRoutes" style="display:none;">
 	  			
 	  				
@@ -547,9 +589,20 @@
 	  			
 	  			
 	  			
-	  			
-	  			
-	  			
+	  		<ol id="joyRideTipContent">
+   
+      <li data-id="numero2" data-button="Next" data-options="tipLocation:top;tipAnimation:fade">
+        <h2>Stop #2</h2>
+        <p>Get the details right by styling Joyride with a custom stylesheet!</p>
+      </li>
+
+      <li data-button="Next">
+        <h2>Stop #4</h2>
+        <p>It works as a modal too!</p>
+      </li>
+ 
+    </ol>
+
 	  			
 	  			
 	  			

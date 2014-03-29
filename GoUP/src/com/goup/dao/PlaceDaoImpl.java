@@ -90,12 +90,13 @@ public class PlaceDaoImpl implements PlaceDao {
 		
 		List<Place> ikotBldgList = new ArrayList<Place>();
 		
-		sql = "select * from place join categories join routeIkot on place.place_category=categories.category_id and place.place_id=routeIkot.place_id order by routeIkot.route_index";
+		sql = "select * from place join categories join routeKatipunan on place.place_category=categories.category_id and place.place_id=routeKatipunan.place_id order by routeKatipunan.route_index";
 		jdbcTemplate = new JdbcTemplate(dataSource);
 		ikotBldgList = jdbcTemplate.query(sql, new PlaceRowMapper());
 		
 		placeList.add(ikotBldgList);
 		
+	
 		return placeList;
 	
 	}

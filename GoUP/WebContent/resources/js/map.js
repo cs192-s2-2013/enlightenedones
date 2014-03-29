@@ -604,7 +604,7 @@ function calcIkot(originLat, originLng, destLat, destLng) {
 			    
 			    $(document).ready(function() {
 			    	$(".routejeep-link1").click(function() {
-		    	    	hideRouteMarkers();
+		    	    	clearMarkers();
 		    	    	$("div#routelength").html("approx: "+ikotdistance+" mins <br />");
 		    	    	$("div#routelength").append("Minimum travel time: "+mindist+" mins (Path "+minpath+")<br />");
 		    	    	if(directionsDisplay.getMap() == null) directionsDisplay.setMap(map);
@@ -622,7 +622,7 @@ function calcIkot(originLat, originLng, destLat, destLng) {
 		    	    });
 			    	
 		    	    $(".routejeep-link2").click(function() {
-		    	    	hideRouteMarkers();
+		    	    	clearMarkers();
 		    	    	$("div#routelength").html("approx: "+ikotdistance+" mins");
 		    	    	$("div#routelength").append("Minimum travel time: "+mindist+" mins (Path "+minpath+")<br />");
 		    	    	if(directionsDisplay.getMap() == null) directionsDisplay.setMap(map);
@@ -647,7 +647,7 @@ function calcIkot(originLat, originLng, destLat, destLng) {
 function calcRoute(originLat, originLng, destLat, destLng) {
 	var originLatLngStr = originLat+","+originLng;
 	var destinationLatLngStr = destLat+","+destLng;
-
+		
 	  clearMarkers();
 	  mindist = 999999;
 
@@ -684,7 +684,7 @@ function calcRoute(originLat, originLng, destLat, destLng) {
 	    $(document).ready(function() {
     	    $(".route-link").click(function() {
     	    	var index = $(this).data("index");
-    	    	hideRouteMarkers();
+    	    	clearMarkers();
     	    	$("div#routelength").html("");
     	    	if(directionsDisplay.getMap() == null) directionsDisplay.setMap(map);
     	    	if(visiblePath[0] == 1) ikotRoute();
@@ -740,6 +740,12 @@ function clearMarkers(){
 	}
 	rideMarkers = [];
 	walkMarkers = [];
+	
+	for(var i = 0; i < anotherArray.length; i++){
+		anotherArray[i].setMap(null);
+	}
+	anotherArray = [];
+	
 }
 
 function hideRouteMarkers(){
@@ -928,9 +934,15 @@ function updateMyPlaces(){
 	$("div#favorites").html("");
 	if(myPlacesList!=""){
 		for(var i=0;i<myPlacesList.length;i++){
-			$("div#favorites").append('<div class="results-item"><a>'+myPlacesList[i].placeName+'</a></div>');
+			$("div#favorites").append('<div><a class="favorite-link">'+myPlacesList[i].placeName+'</a></div>');
 			
 		}
+		
+		$("a.favorite-link").click(function(){
+			var placename = $(this).html();
+			var category = "";
+			doSearchOptimized(category, placename)
+		});
 		
 	}else{
 		
@@ -1025,6 +1037,41 @@ function hideJeepneyRoutes(){
 	}
 }
 
+function showHelp(){
+	$('#joyRideTipContent').joyride({
+        autoStart : true,
+        postStepCallback : function (index, tip) {
+        if (index == 2) {
+          $(this).joyride('set_li', false, 1);
+        }
+      },
+      modal:true,
+      expose: true
+      });
+}
+
+function showTrivia(){
+	
+	
+	if($("#trivia").css("display")=="none"){
+		hideAll();
+		$("#trivia").fadeIn(250);
+		display = display + 1;
+		showOrHideFeature();
+	}
+	
+
+}
+
+function hideTrivia(){
+	
+	if($("#trivia").css("display")!="none"){
+		$("#trivia").hide();
+		display = diplay - 1;
+		showOrHideFeature();
+	}
+}
+
 function showWeather(){
 	
 	
@@ -1074,6 +1121,7 @@ function hideAll(){
 	hideGetDirections();
 	hideJeepneyRoutes();
 	hideWeather();
+	hideTrivia();
 	hideResults();
 	
 }
@@ -1121,7 +1169,7 @@ function updateRecentlySearched(){
 			
 			for(var i=0; i<searchedList.length;i++){
 			 
-				$("div#recent").append('<div class="recent-place"><a class="recent-place-link" data-placename="'+ searchedList[i].placeName+ '">'+searchedList[i].placeName+'</a><i class="delete-mark fa fa-times"></i></div>');
+				$("div#recent").append('<div class="recent-place"><a class="recent-place-link" data-placename="'+ searchedList[i].placeName+ '">'+searchedList[i].placeName+'</a></div>');
 				
 				$(".recent-place-link").click(function(){
 					var category ="";
@@ -1592,8 +1640,17 @@ function getJeepneysToPlace(placeId){
 		url: "/UPMap/getJeepneysToPlace",
 		data: "placeId="+placeId,
 		success: function(json){
-			if(json!=null)
-			$("div.info-window").append('<p>Jeepneys Passing By: '+json +'</p>');
+			if(json!=null){
+				jeepneys = $.parseJSON(json);
+				if(jeepneys.length>0){
+					$("div.info-window").append('<p>Jeepneys Passing By:</p>');
+					for(var i = 0; i < jeepneys.length; i++){
+						$("div.info-window").append(jeepneys[i] + '<br />');
+					}
+				}
+				
+			}
+			
 		},
 		error: function(e){
 			alert("error: " + e);
@@ -1610,7 +1667,6 @@ function getJeepneysToPlace(placeId){
 $(document).ready(function(){
 
 	getPlacesPassedByJeepney();
-	getJeepneysToPlace("67");
 	getCategories();
 	getAllPlaceNames();
 	getMyPlaces();
