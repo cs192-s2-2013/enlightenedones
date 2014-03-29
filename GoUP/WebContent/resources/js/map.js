@@ -8,8 +8,13 @@ var routesMarkerArray = [];
 var routeDistances = [];
 var mindist = 999999;
 var minpath;
+var ikotdistance;
+var wayptsnum = 0;
 
-var anotherArray = [];
+var ridePath;
+var walkPath;
+var rideMarkers = [];
+var walkMarkers = [];
 var availablePlaceNames = [];
 var infoWindow = new google.maps.InfoWindow({
 	maxwidth: 500
@@ -324,7 +329,9 @@ var upPhilcRouteCoordinates = [
                              ];
 
 function initialize() {
-	directionsDisplay = new google.maps.DirectionsRenderer();
+	directionsDisplay = new google.maps.DirectionsRenderer({
+      suppressMarkers: true
+    });
 	var myLatlng = new google.maps.LatLng(14.651147,121.060274); 
 
   	var mapOptions = {
@@ -419,8 +426,9 @@ function initialize() {
 function addWaypts(val) {
 	var num = parseInt(val);
 	$("div#waypts").html("");
+	wayptscnt = num;
 	if(num > 0)
-		$("div#waypts").append('<input id="waypointsButton" class="btn btn-primary" type="button" value="TSP" onclick="tsp();" /><br />');
+		$("div#waypts").append('<input id="waypointsButton" class="btn btn-primary" type="button" value="Use waypoints" onclick="tsp();" /><br />');
 	for(var i = 1; i <= num; i++) {
 		$("div#waypts").append('<input id="waypoint'+i+'" class="waypoint-input" type="text"/><br />');
 	}
@@ -433,7 +441,96 @@ function addWaypts(val) {
 }
 
 function tsp() {
+	var valid = true;
+	var origin = $("#searchOriginPlaceName").val();
+	var dest = $("#searchDestinationPlaceName").val();
+	var start, end;
+	if(origin == "" || dest == "")
+		valid = false;
+	waypointsArray = $(".waypoint-input");
+	var latlngarray = [];
+	var placeNames = [origin];
+	for(var i = 0; i < waypointsArray.length; i++) {
+		if(waypointsArray[i].value == "") {
+			valid = false;
+			break;
+		}
+		placeNames.push(waypointsArray[i].value);
+		var place = $.parseJSON($.ajax({
+			type: "Get",
+	        url:  '/UPMap/findPlace',
+	        dataType: "json",
+	        data: "placeName=" +waypointsArray[i].value,
+	        async: false
+	    }).responseText);
+		var latlngstr = place[0].placeLat+","+place[0].placeLong;
+		latlngarray.push({
+			location:latlngstr,
+			stopover:true
+		});
+	}
+	placeNames.push(dest);
 	
+	$.ajax({
+		type: "Get",
+		url: "/UPMap/findPlace",
+		data: "placeName=" +origin,
+		async: false,
+		success: function(json){
+			place = $.parseJSON(json);
+			start = place[0].placeLat+","+place[0].placeLong;
+		},
+		error: function(e){
+			alert("Error: "+ e);
+		}
+	});
+	$.ajax({
+		type: "Get",
+		url: "/UPMap/findPlace",
+		data: "placeName=" +dest,
+		async: false,
+		success: function(json){
+			place = $.parseJSON(json);
+			end = place[0].placeLat+","+place[0].placeLong;
+		},
+		error: function(e){
+			alert("Error: "+ e);
+		}
+	});
+	
+	
+	if(!valid) {
+		clearMarkers();
+		$("div#routes").html("");
+    	$("div#routelength").html("");
+	}
+	else {
+		var tick = false;
+		if($("#optimizeWaypoints").is(":checked"))
+			tick = true;
+		alert(tick);
+		var request = {
+			origin:start,
+			destination:end,
+			travelMode:google.maps.TravelMode.WALKING,
+			waypoints: latlngarray,
+			optimizeWaypoints: tick
+		};
+
+		directionsService.route(request, function(response, status) {
+		     if(status == google.maps.DirectionsStatus.OK) {
+		    	directionsDisplay.setMap(map);
+				directionsDisplay.setDirections(response);
+		    	$("div#routes").html("");
+		    	$("div#routelength").html("");
+		    	var route = response.routes[0];
+		    	for(var i = 0; i < route.legs.length; i++) {
+		    		$("div#routes").append('Leg '+(i+1)+': '+placeNames[i]+' to '+placeNames[i+1]+': '+route.legs[i].distance.value+' m<br />');
+		    	}
+		     }
+		    
+		});
+	}
 }
 
 function path() {
@@ -443,6 +540,7 @@ function path() {
 		clearMarkers();
 		directionsDisplay.setMap();
 		$("div#routes").html("");
+		$("div#routelength").html("");
 	}
 	else {
 		var originLat = "";
@@ -522,7 +620,9 @@ function calcIkot(originLat, originLng, destLat, destLng) {
 	var destLngNum = parseFloat(destLng);
 	var originLatLng = new google.maps.LatLng(originLatNum, originLngNum);
 	var destLatLng = new google.maps.LatLng(destLatNum, destLngNum);
-	
+	ikotdistance = 0.0;
+	var i1, i2;
+
 	var mindist1 = null;
 	var mindist2 = null;
 	for(var i = 0; i < upIkotRouteCoordinates.length; i++) {
@@ -532,57 +632,104 @@ function calcIkot(originLat, originLng, destLat, destLng) {
 		if(mindist1 == null || mindist1 > data[0]) {
 			mindist1 = data[0];
 			start = data[1];
+			i1 = i;
 		}
 		data = closestPoint(p1.lat(), p1.lng(), p2.lat(), p2.lng(), destLatNum, destLngNum);
 		if(mindist2 == null || mindist2 > data[0]) {
 			mindist2 = data[0];
 			end = data[1];
+			i2 = i;
 		}
 	}
-	
-	var path1 = [originLatLng, start];
-	var path2 = [end, destLatLng];
-	
-	var line1 = new google.maps.Polyline({
-        path: path1,
-        geodesic: true,
-        strokeColor: '#fff000',
-        strokeOpacity: 0.80,
-        strokeWeight: 4,
-        icons: [{
-            icon: lineSymbol,
-            offset: '100%'
-          }]
-      });
-	var line2 = new google.maps.Polyline({
-        path: path2,
-        geodesic: true,
-        strokeColor: '#fff000',
-        strokeOpacity: 0.80,
-        strokeWeight: 4,
-        icons: [{
-            icon: lineSymbol,
-            offset: '100%'
-          }]
-      });
-	var len = routesMarkerArray.length;
-	for(var i = 0; i < anotherArray.length; i++)
-		anotherArray[i].setMap(null);
-	anotherArray = [];
-	anotherArray[0] = line1;
-	anotherArray[1] = line2;
-	$("div#routes").append('<div class="col-md-1"><a class="routejeep-link">'+(len+1)+'</a></div> ');
-	$("div#routes").append("<br />");
-	$(document).ready(function() {
-	    $(".routejeep-link").click(function() {
+	ikotdistance += google.maps.geometry.spherical.computeDistanceBetween(upIkotRouteCoordinates[i1], start);
+	i1=(i1+1)%upIkotRouteCoordinates.length;
+	for(var trace = i1; trace != i2; trace=(trace+1)%upIkotRouteCoordinates.length) {
+		var p1 = upIkotRouteCoordinates[trace];
+		var p2 = upIkotRouteCoordinates[(trace+1)%upIkotRouteCoordinates.length];
+		ikotdistance += google.maps.geometry.spherical.computeDistanceBetween(p1,p2);
+	}
+	ikotdistance += google.maps.geometry.spherical.computeDistanceBetween(upIkotRouteCoordinates[i2], end);
+	ikotdistance /= (67.0*1.5);
+
+	var from1 = originLat+","+originLng;
+	var to1 = start.lat()+","+start.lng();
+	var from2 = end.lat()+","+end.lng();
+	var to2 = destLat+","+destLng;
+	var request1 = {
+		      origin:from1,
+		      destination:to1,
+		      travelMode:google.maps.TravelMode.WALKING
+	};
+	var request2 = {
+		      origin:from2,
+		      destination:to2,
+		      travelMode:google.maps.TravelMode.WALKING
+	};
+
+	directionsService.route(request1, function(response1, status) {
+		var walkdist = 0.0;
+	    if (status == google.maps.DirectionsStatus.OK) {
+	    	ridePath = response1;
 	    	$("div#routelength").html("");
-	    	hideRouteMarkers();
-	    	anotherArray[0].setMap(map);
-	    	anotherArray[1].setMap(map);
-	    	directionsDisplay.setMap(null);
-	    	if(visiblePath[0] == 0) ikotRoute();
-	    });
-	});
+	    	$("div#routes").append('<div class="col-md-1"><a class="routejeep-link1">Walk to Ikot'+'</a></div> ');
+	    	for (var i = 0; i < ridePath.routes[0].legs[0].steps.length; i++)
+	    		walkdist += ridePath.routes[0].legs[0].steps[i].distance.value;
+
+	    	directionsService.route(request2, function(response2, status) {
+			    if (status == google.maps.DirectionsStatus.OK) {
+			    	walkPath = response2;
+			    	$("div#routelength").html("");
+			    	$("div#routes").append('<div class="col-md-1"><a class="routejeep-link2" data-index='+(i-1)+'>Walk from Ikot'+'</a></div> ');
+			    	for (var i = 0; i < walkPath.routes[0].legs[0].steps.length; i++)
+			    		walkdist += walkPath.routes[0].legs[0].steps[i].distance.value;
+			    	ikotdistance += walkdist/67.0;
+			    	ikotdistance = ikotdistance.toFixed();
+			    	if(ikotdistance <= mindist) {
+			    		mindist = ikotdistance;
+			    		minpath = "Ikot";
+			    	}
+			    }
+
+			    $(document).ready(function() {
+			    	$(".routejeep-link1").click(function() {
+		    	    	hideRouteMarkers();
+		    	    	$("div#routelength").html("approx: "+ikotdistance+" mins <br />");
+		    	    	$("div#routelength").append("Minimum travel time: "+mindist+" mins (Path "+minpath+")<br />");
+		    	    	if(directionsDisplay.getMap() == null) directionsDisplay.setMap(map);
+		    	    	if(visiblePath[0] == 0) ikotRoute();
+		    	    	directionsDisplay.setDirections(ridePath);
+		    	    	for (var i = 0; i < ridePath.routes[0].legs[0].steps.length; i++) {
+		    	    	    var newMarker = new google.maps.Marker({
+		    	    	      position: ridePath.routes[0].legs[0].steps[i].start_location,
+		    	    	      map: map
+		    	    	    });
+		    	    	    attachInstructionText(newMarker, ridePath.routes[0].legs[0].steps.steps[i].instructions);
+		    	    	    rideMarkers[i] = newMarker;
+		    	    	    newMarker = null;
+		    	    	 }
+		    	    });
+
+		    	    $(".routejeep-link2").click(function() {
+		    	    	hideRouteMarkers();
+		    	    	$("div#routelength").html("approx: "+ikotdistance+" mins");
+		    	    	$("div#routelength").append("Minimum travel time: "+mindist+" mins (Path "+minpath+")<br />");
+		    	    	if(directionsDisplay.getMap() == null) directionsDisplay.setMap(map);
+		    	    	if(visiblePath[0] == 0) ikotRoute();
+		    	    	directionsDisplay.setDirections(walkPath);
+		    	    	for (var i = 0; i < walkPath.routes[0].legs[0].steps.length; i++) {
+		    	    	    var newMarker = new google.maps.Marker({
+		    	    	      position: walkPath.routes[0].legs[0].steps[i].start_location,
+		    	    	      map: map
+		    	    	    });
+		    	    	    attachInstructionText(newMarker, walkPath.routes[0].legs[0].steps.steps[i].instructions);
+		    	    	    walkMarkers[i] = newMarker;
+		    	    	    newMarker = null;
+		    	    	 }
+		    	    });
+		    	});
+		    });
+	    }
+	  });
 }
 
 function calcRoute(originLat, originLng, destLat, destLng) {
@@ -599,7 +746,7 @@ function calcRoute(originLat, originLng, destLat, destLng) {
 	      provideRouteAlternatives:true
 	  };
 	  directionsService.route(request, function(response, status) {
-	    if (status == google.maps.DirectionsStatus.OK) {
+		  if (status == google.maps.DirectionsStatus.OK) {
 	    	$("div#routes").html("");
 	    	$("div#routelength").html("");
     	 for(var i = 1; i <= response.routes.length; i++) {
@@ -614,12 +761,14 @@ function calcRoute(originLat, originLng, destLat, destLng) {
 	    	  for(var j = 0; j < response.routes[i].legs[0].steps.length; j++) {
 	    		  dist += response.routes[i].legs[0].steps[j].distance.value;
 	    	  }
+	    	  dist /= 67.0;
+	    	  dist = dist.toFixed();
 	    	  routeDistances[i] = dist;
 	    	  if(routeDistances[i] < mindist) { mindist = routeDistances[i]; minpath = i+1; }
 	      }
 	      drawRoutesMarkers(response, 0);
 	    }
-	    
+
 	    $(document).ready(function() {
     	    $(".route-link").click(function() {
     	    	var index = $(this).data("index");
@@ -627,11 +776,12 @@ function calcRoute(originLat, originLng, destLat, destLng) {
     	    	$("div#routelength").html("");
     	    	if(directionsDisplay.getMap() == null) directionsDisplay.setMap(map);
     	    	if(visiblePath[0] == 1) ikotRoute();
+    	    	directionsDisplay.setDirections(response);
     	    	directionsDisplay.setRouteIndex(index);
     	    	drawRoutesMarkers(response, index);
     	    });
     	});
-	    
+
 	    calcIkot(originLat, originLng, destLat, destLng);
 	  });
 }
@@ -647,8 +797,8 @@ function drawRoutesMarkers(directionResult, ind) {
 	    routesMarkerArray[ind][i] = newMarker;
 	    newMarker = null;
 	  }
-	  $("div#routelength").html(routeDistances[ind]+" m <br />");
-	  $("div#routelength").append("Minimum distance: "+mindist+" m (Path "+minpath+")<br />");
+	  $("div#routelength").html("approx "+routeDistances[ind]+" mins <br />");
+	  $("div#routelength").append("Minimum travel time: "+mindist+" mins (Path "+minpath+")<br />");
 }
 
 function attachInstructionText(marker, text) {
@@ -663,13 +813,21 @@ function clearMarkers(){
 		markerArray[i].setMap(null);
 	}
 	markerArray = [];
-	
+
 	for(var i = 0; i < routesMarkerArray.length; i++) {
 		for(var j = 0; j < routesMarkerArray[i].length; j++) {
 			routesMarkerArray[i][j].setMap(null);
 		}
 	}
 	routesMarkerArray = [];
+	for(var i = 0; i < rideMarkers.length; i++) {
+		rideMarkers[i].setMap(null);
+	}
+	for(var i = 0; i < walkMarkers.length; i++) {
+		walkMarkers[i].setMap(null);
+	}
+	rideMarkers = [];
+	walkMarkers = [];
 }
 
 function hideRouteMarkers(){
@@ -678,8 +836,12 @@ function hideRouteMarkers(){
 			routesMarkerArray[i][j].setMap(null);
 		}
 	}
-	anotherArray[0].setMap(null);
-	anotherArray[1].setMap(null);
+	for(var i = 0; i < rideMarkers.length; i++) {
+		rideMarkers[i].setMap(null);
+	}
+	for(var i = 0; i < walkMarkers.length; i++) {
+		walkMarkers[i].setMap(null);
+	}
 }
 
 function setInitPanAndZoom(){
