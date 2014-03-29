@@ -169,7 +169,7 @@
 	  		<div class="icon-title"><a id="screenshot"><span class="menu-icon icon-screenshot"></span>Screenshot</a></div>
 	  		<div class="icon-title"><a onclick="showWeather();"><span class="menu-icon icon-weather"></span>Weather</a></div>
 	  		<div class="icon-title medium"><a onclick="showHelp();"><span class="menu-icon icon-help"></span>Help</a></div>
-	  	
+	  		
 	  	</div>
 	  					
 	  					
@@ -198,7 +198,6 @@
 	  			
 
 	  			<div id="welcome"style="display:none;">
-	  			<div id="numero2">adahsdhasdhah</div>
 	  			
 	  				<section id="one" class="feature-panel" data-type="background" data-speed="10">
 	  					<div class="feature-text">
@@ -277,6 +276,8 @@
 	  			<div id="results" style="display:none;">
 	  			
 	  			</div>
+	  			
+	  		
 
 	  			<div id="weather" style="display:none;">
 	  			

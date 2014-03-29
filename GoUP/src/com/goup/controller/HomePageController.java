@@ -44,6 +44,7 @@ public class HomePageController {
 	
 	String success = null; 
 	
+	
 	@RequestMapping("/home")
 	public ModelAndView home(@ModelAttribute Place place){
 		ModelAndView modelAndView = new ModelAndView();
