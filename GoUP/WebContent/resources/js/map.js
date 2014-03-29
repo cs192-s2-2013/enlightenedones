@@ -1050,14 +1050,30 @@ function showHelp(){
       });
 }
 
+function showSettings(){
+	
+	
+	if($("#settings").css("display")=="none"){
+		hideAll();
+		$("#settings").fadeIn(250);
+		display = display + 1;
+		showOrHideFeature();
+	}
+	
+
+}
+
+
 function showTrivia(){
 	
 	
 	if($("#trivia").css("display")=="none"){
+		
 		hideAll();
 		$("#trivia").fadeIn(250);
 		display = display + 1;
 		showOrHideFeature();
+		
 	}
 	
 
@@ -1067,6 +1083,15 @@ function hideTrivia(){
 	
 	if($("#trivia").css("display")!="none"){
 		$("#trivia").hide();
+		display = diplay - 1;
+		showOrHideFeature();
+	}
+}
+
+function hideSettings(){
+	
+	if($("#settings").css("display")!="none"){
+		$("#settings").hide();
 		display = diplay - 1;
 		showOrHideFeature();
 	}
@@ -1122,6 +1147,7 @@ function hideAll(){
 	hideJeepneyRoutes();
 	hideWeather();
 	hideTrivia();
+	hideSettings();
 	hideResults();
 	
 }

@@ -281,10 +281,28 @@ input.form-control {
 	
 	outline: 0 !important;
 }
+#settings {
+	padding: 10px;
+}
+
+#trivia{
+	padding: 10px;
+}
+
+#trivia .title{
+	color: #111;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+#trivia {
+	font-size: 16px;
+	font-color: #000;
+}
 
 #searchForm {
 	padding: 12px;
-	width: 580px;
+	width: 560px;
 	height: 100%;
 	display: inline-block;
 	overflow: hidden;

@@ -161,15 +161,17 @@
 		</div>
 	  	
 	  	<div id="menu">
-	  		<div class="icon-title"><a onclick="viewMyPlaces();"><span class="menu-icon icon-myplaces"></span>My Places</a></div>
-	  		<div class="icon-title"><a onclick="viewGetDirections();"><span class="menu-icon icon-directions"></span>Get Directions</a></div>
-	  		<div class="icon-title medium"><a onclick="showJeepneyRoutes();"><span class="menu-icon icon-jeepney"></span>Jeepney</a></div>
-	  		<div class="icon-title"><a onclick="showTrivia();"><span class="menu-icon icon-help"></span>Trivia</a></div>
+	  		<div id= "buttonPlace" class="icon-title"><a onclick="viewMyPlaces();"><span class="menu-icon icon-myplaces"></span>My Places</a></div>
+	  		<div id= "buttonDirect" class="icon-title"><a onclick="viewGetDirections();"><span class="menu-icon icon-directions"></span>Get Directions</a></div>
+	  		<div id= "buttonRoute" class="icon-title medium"><a onclick="showJeepneyRoutes();"><span class="menu-icon icon-jeepney"></span>Jeepney</a></div>
+	  		<div id= "buttonTrivia" class="icon-title"><a onclick="showTrivia();"><span class="menu-icon icon-help"></span>Trivia</a></div>
 	  		<br />
-	  		<div class="icon-title"><a id="screenshot"><span class="menu-icon icon-screenshot"></span>Screenshot</a></div>
-	  		<div class="icon-title"><a onclick="showWeather();"><span class="menu-icon icon-weather"></span>Weather</a></div>
-	  		<div class="icon-title medium"><a onclick="showHelp();"><span class="menu-icon icon-help"></span>Help</a></div>
-	  		
+	  		<div id= "buttonScreen" class="icon-title"><a id="screenshot"><span class="menu-icon icon-screenshot"></span>Screenshot</a></div>
+	  		<div id= "buttonWeather" class="icon-title"><a onclick="showWeather();"><span class="menu-icon icon-weather"></span>Weather</a></div>
+	  		<div id= "buttonHelp" class="icon-title medium"><a onclick="showHelp();"><span class="menu-icon icon-help"></span>Help</a></div>
+	  		<div id= "buttonSettings" class="icon-title medium"><a onclick="showSettings();"><span class="menu-icon icon-help"></span>Settings</a></div>
+	  	
+
 	  	</div>
 	  					
 	  					
@@ -198,7 +200,7 @@
 	  			
 
 	  			<div id="welcome"style="display:none;">
-	  			
+
 	  				<section id="one" class="feature-panel" data-type="background" data-speed="10">
 	  					<div class="feature-text">
 	  						<div class="feature-title">Welcome to Go UP!</div>
@@ -285,35 +287,46 @@
 	  			
 	  			</div>
 	  			
+	  			<div id="settings" style="display: none;">
+	  			<form id="findPath" onkeypress="return event.keyCode != 13;">
+		  				<b style="font-size:20px;">Add Place</b>
+		  				<input id="placeName" class="search-input" placeholder="Place Name" type="text" />
+		  				<input id="placeLatitude" class="search-input" placeholder="Latitude" type="text"/>
+		  				<input id="placeLongitude" class="search-input" placeholder="Longitude" type="text"/>
+		  				<input id="addPlaceButton" class="btn btn-primary" type="button" value="Add Place" onclick="" />
+		  				
+		  		</form>
+	  			</div>
+	  			
 	  			<div id="trivia" style="display:none;">
-	  				FUN FACTS AND TRIVIA ABOUT UP DILIMAN.<br/>
-					1. The bird in the UP Seal is a parrot not an eagle.<br/>
-					2. There is only 1 coconut tree around the sunken garden.<br/>
-					3. Sunken garden is still sunking.<br/>
-					4. in 1960's lagoon is a golf course.<br/>
-					5. The original oblation can be found in the archives section of the main library<br/>
-					6. Fernando Poe Sr. is the model of oblation.<br/>
-					7. Color coding for jeep, yellow for ikot and toki, red for katipunan and green for sm, pantranco and philcoa.<br/>
-					8. CAL, CSSP and CS is called tricol.<br/>
-					9. Aristocarts are the original names of shops that sells pancit canton, kwek-kwek etc.<br/>
-					10. Acad Oval is 2.2 kilometers long.<br/>
-					11. Theres a room  directly below oblation.<br/>
-					12. There's a virgin forest inside UP it is called Arboretum.<br/>
-					13. The official name of Sunken Garden is General Luna Parade Grounds.<br/>
-					14. You can rotate the sculpture in front of College of Business Administration.<br/>
-					15. You can not enter DMST wearing only shorts or slippers.<br/>
-					16. The one who design UP Chapel is Leandro Locsin, First National  Artist for Architecture.<br/>
-					17. The original statue of Bonifacio if moved from Balintawak to Vinzon's Hall.<br/>
-					18. There is a University wide Prom, the Cadena de Amor.<br/>
-					19. Every monday in front of Palma Hall, National anthem and UP naming mahal is played.<br/>
-					20. Oblation is 3.5 meters tall and symbolizes 359 years of Spanish Regime.<br/>
-					21. UP College of Architecture is the only College that offers landscape architecture course in the Philippines.<br/>
-					22. There's one and only intersection in the UP where traffic light is working, the Melchor and Tennis court intersection.<br/>
-					23. UP is a non-smoking area.<br/>
-					24. UP Observatory is the highest point in UP Diliman.<br/>
-					25. Sunken Garden is the lowest point in UP Diliman.<br/>
-					26. Ikot, SM and pantranco jeeps are out aroung 9pm, katipunan jeep around 10pm and Philcoa is around 11pm.<br/>
-					Source: http://forexampaul.tumblr.com/post/4607795763<br />
+	  				<div class="title">FUN FACTS AND TRIVIA ABOUT UP DILIMAN.<br/><br /></div>
+					1. The bird in the UP Seal is a parrot not an eagle.<br/><br/>
+					2. There is only 1 coconut tree around the sunken garden.<br/><br/>
+					3. Sunken garden is still sunking.<br/><br/>
+					4. in 1960's lagoon is a golf course.<br/><br/>
+					5. The original oblation can be found in the archives section of the main library<br/><br/>
+					6. Fernando Poe Sr. is the model of oblation.<br/><br/>
+					7. Color coding for jeep, yellow for ikot and toki, red for katipunan and green for sm, pantranco and philcoa.<br/><br/>
+					8. CAL, CSSP and CS is called tricol.<br/><br/>
+					9. Aristocarts are the original names of shops that sells pancit canton, kwek-kwek etc.<br/><br/>
+					10. Acad Oval is 2.2 kilometers long.<br/><br/>
+					11. Theres a room  directly below oblation.<br/><br/>
+					12. There's a virgin forest inside UP it is called Arboretum.<br/><br/>
+					13. The official name of Sunken Garden is General Luna Parade Grounds.<br/><br/>
+					14. You can rotate the sculpture in front of College of Business Administration.<br/><br/>
+					15. You can not enter DMST wearing only shorts or slippers.<br/><br/>
+					16. The one who design UP Chapel is Leandro Locsin, First National  Artist for Architecture.<br/><br/>
+					17. The original statue of Bonifacio if moved from Balintawak to Vinzon's Hall.<br/><br/>
+					18. There is a University wide Prom, the Cadena de Amor.<br/><br/>
+					19. Every monday in front of Palma Hall, National anthem and UP naming mahal is played.<br/><br/>
+					20. Oblation is 3.5 meters tall and symbolizes 359 years of Spanish Regime.<br/><br/>
+					21. UP College of Architecture is the only College that offers landscape architecture course in the Philippines.<br/><br/>
+					22. There's one and only intersection in the UP where traffic light is working, the Melchor and Tennis court intersection.<br/><br/>
+					23. UP is a non-smoking area.<br/><br/>
+					24. UP Observatory is the highest point in UP Diliman.<br/><br/>
+					25. Sunken Garden is the lowest point in UP Diliman.<br/><br/>
+					26. Ikot, SM and pantranco jeeps are out aroung 9pm, katipunan jeep around 10pm and Philcoa is around 11pm.<br/><br/>
+					Source: http://forexampaul.tumblr.com/post/4607795763<br /><br/>
 						  			
 	  			</div>
 	  			
@@ -591,21 +604,87 @@
 	  			
 	  			
 	  			
-	  		<ol id="joyRideTipContent">
-   
-      <li data-id="numero2" data-button="Next" data-options="tipLocation:top;tipAnimation:fade">
-        <h2>Stop #2</h2>
-        <p>Get the details right by styling Joyride with a custom stylesheet!</p>
-      </li>
-
-      <li data-button="Next">
-        <h2>Stop #4</h2>
-        <p>It works as a modal too!</p>
-      </li>
- 
-    </ol>
-
-	  			
+				  <ol id="joyRideTipContent">
+			   
+			      <li data-id="welcome" data-button="Next" data-options="tipLocation:right;tipAnimation:fade">
+			        <h2>Welcome to UP MAP!</h2>
+			        <p>An online map of the University of the Philippines Diliman
+			        	that aims to help people find their way around the campus!</p>
+			      </li>
+			      
+			      <li data-id="map-wrapper" data-button="Next" data-options="tipLocation:left;tipAnimation:fade">
+			        <h2>Google Map</h2>
+			        <p>With an embedded Google Map. Finding roads, buildings and waypoints
+			        	are a piece of cake!</p>
+			      </li>
+			
+				  <li data-id="nav" data-button="Next" data-options="tipLocation:bottom;tipAnimation:fade">
+			        <h2>Quick Navigation</h2>
+			        <p>Easy On-Click way to navigate through the many useful functions
+			        	in the site.</p>
+			      </li>
+			      
+			      <li data-id="welcome" data-button="Next" data-options="tipLocation:right;tipAnimation:fade">
+			        <h2>Quick Navigation</h2>
+			        <p>Easy On-Click way to navigate through the many useful functions
+			        	in the site.</p>
+			      </li>
+			      
+			      <li data-id="searchForm" data-button="Next" data-options="tipLocation:right;tipAnimation:fade">
+			        <h2>Quick Search</h2>
+			        <p>Need to search for a building? Search it here to pinpoint it in the Google Map.</p>
+			        <p>Choose a Category to filter your results.</p>
+			      </li>
+			      
+			      <li data-id="menu" data-button="Next" data-options="tipLocation:left;tipAnimation:fade">
+			        <h2>Menu</h2>
+			        <p>Try out our different functions that will help you on your UP Map
+			        	experience!</p>
+			      </li>
+			      
+			      <li data-id="buttonPlace" data-button="Next" data-options="tipLocation:left;tipAnimation:fade">
+			        <h2>My Places</h2>
+			        <p>View your favorite places and recent searches here!</p>
+			      </li>
+			      
+			      <li data-id="buttonDirect" data-button="Next" data-options="tipLocation:left;tipAnimation:fade">
+			        <h2>Get Direction</h2>
+			        <p>Need to find a route from here to there? Try out our Route Finding!</p>
+			      </li>
+			      
+			      <li data-id="buttonRoute" data-button="Next" data-options="tipLocation:left;tipAnimation:fade">
+			        <h2>Jeepney</h2>
+			        <p>Find which buildings, the jeeps in UPD passes by.</p>
+			      </li>
+			      
+			      <li data-id="buttonTrivia" data-button="Next" data-options="tipLocation:left;tipAnimation:fade">
+			        <h2>Trivia</h2>
+			        <p>Browse through random interesting facts about U.P.D.</p>
+			      </li>
+			      
+			      <li data-id="buttonScreen" data-button="Next" data-options="tipLocation:left;tipAnimation:fade">
+			        <h2>Screenshot</h2>
+			        <p>Grab a Screenshot of the current view of the Map</p>
+			      </li>
+			      
+			      <li data-id="buttonWeather" data-button="Next" data-options="tipLocation:left;tipAnimation:fade">
+			        <h2>Weather</h2>
+			        <p>How's the weather up there?</p>
+			      </li>
+			      
+			      <li data-id="buttonHelp" data-button="Next" data-options="tipLocation:left;tipAnimation:fade">
+			        <h2>Help</h2>
+			        <p>This is what you clicked.</p>
+			      </li>
+			      
+			      <li data-button="End">
+			        <h2>The End</h2>
+			        <p>Hope this helps!</p>
+			        <p>Enjoy!</p>
+			        
+			      </li>
+			    </ol>
+  			
 	  			
 	  			
 	  			
