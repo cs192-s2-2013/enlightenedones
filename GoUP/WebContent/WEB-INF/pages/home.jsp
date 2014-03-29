@@ -312,6 +312,7 @@
 					24. UP Observatory is the highest point in UP Diliman.<br/>
 					25. Sunken Garden is the lowest point in UP Diliman.<br/>
 					26. Ikot, SM and pantranco jeeps are out aroung 9pm, katipunan jeep around 10pm and Philcoa is around 11pm.<br/>
+					Source: http://forexampaul.tumblr.com/post/4607795763<br />
 						  			
 	  			</div>
 	  			
