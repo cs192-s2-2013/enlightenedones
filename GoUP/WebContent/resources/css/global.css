@@ -604,7 +604,6 @@ input[placeholder], [placeholder], *[placeholder] {
 #results,#myPlaces,#jeepneyRoutes, #getDirections{
 	padding-top: 10px;
 	padding-bottom: 10px;
-	border-bottom: 1px solid #eee;
 }
 
 #results > * {
@@ -617,8 +616,11 @@ input[placeholder], [placeholder], *[placeholder] {
 #getDirections > * {
 	padding: 2px 15px;
 }
-
-#findPath > input {
+input[type="checkbox"]{
+	display: inline !important;
+	margin-left: 10px;
+}
+.waypoint-input, #findPath > input[type="text"], #findPath > input[type="button"]{
 	border: 1px solid #333;
 	border-radius: 0px;
 	display: block;

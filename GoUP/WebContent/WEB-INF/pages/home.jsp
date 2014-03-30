@@ -108,7 +108,7 @@
     		
 
     				
-    				$('#screenshot').click(function(){
+    				$('#buttonScreen').click(function(){
     					html2canvas($('#map-canvas'), {
   						  proxy: "proxy.js",
   						  useCORS: true,
@@ -166,7 +166,7 @@
 	  		<div id= "buttonRoute" class="icon-title medium"><a onclick="showJeepneyRoutes();"><span class="menu-icon icon-jeepney"></span>Jeepney</a></div>
 	  		<div id= "buttonTrivia" class="icon-title"><a onclick="showTrivia();"><span class="menu-icon icon-help"></span>Trivia</a></div>
 	  		<br />
-	  		<div id= "buttonScreen" class="icon-title"><a id="screenshot"><span class="menu-icon icon-screenshot"></span>Screenshot</a></div>
+	  		<div id= "buttonScreen" class="icon-title"><a><span class="menu-icon icon-screenshot"></span>Screenshot</a></div>
 	  		<div id= "buttonWeather" class="icon-title"><a onclick="showWeather();"><span class="menu-icon icon-weather"></span>Weather</a></div>
 	  		<div id= "buttonHelp" class="icon-title medium"><a onclick="showHelp();"><span class="menu-icon icon-help"></span>Help</a></div>
 	  		<div id= "buttonSettings" class="icon-title medium"><a onclick="showSettings();"><span class="menu-icon icon-help"></span>Settings</a></div>
@@ -249,19 +249,20 @@
 		  				<input id="searchOriginPlaceName" class="search-input" placeholder="Where are you now?" type="text" />
 		  				<input id="searchDestinationPlaceName" class="search-input" placeholder="Where are you going?" type="text"/>
 		  				<input id="searchPathButton" class="btn btn-primary" type="button" value="Get Directions" onclick="path();" />
-		  				<select id="waypoints" onchange="addWaypts(this.value);">
+		  				
+		  				<label>Waypoints:</label><select id="waypoints" onchange="addWaypts(this.value);">
+		  				
 		  					<option value="0">0</option>
 		  					<option value="1">1</option>
 		  					<option value="2">2</option>
 		  					<option value="3">3</option>
 		  					<option value="4">4</option>
 		  					<option value="5">5</option>
+		  					<option value="6">6</option>
+		  					<option value="7">7</option>
 		  				</select>
+		  				<br /><label>Loose Priority:</label><input id="optimizeWaypoints" type="checkbox" />
 		  			</form>
-		  			
-		  			<div id="waypts">
-		  			
-		  			</div>
 		  			<div id="routes">
 	  			
 	  				</div>
@@ -269,6 +270,10 @@
 	  				<div id = "routelength">
 	  				
 	  				</div>
+		  			<div id="waypts">
+		  			
+		  			</div>
+		  			
 		  			
 	  			</div>
 	  			
